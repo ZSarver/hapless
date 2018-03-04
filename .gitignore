@@ -1,3 +1,5 @@
+hapless.js
+*.swp
 /bower_components/
 /node_modules/
 /.pulp-cache/
