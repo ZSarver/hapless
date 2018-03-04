@@ -5,12 +5,9 @@ import CardData (Hand(..), attack)
   
 data Facing = North | South | East | West
 
-instance facingEq :: Eq Facing where
-    eq North North = true
-    eq South South = true
-    eq East East = true
-    eq West West = true
-    eq _ _ = false
+derive instance genericFacing :: Generic Facing
+instance eqFacing :: Eq Facing where
+  eq = geq
 
 newtype Player = Player 
     { hand :: Hand
