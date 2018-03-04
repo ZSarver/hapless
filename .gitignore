@@ -9,3 +9,5 @@ hapless.js
 /.psc*
 /.purs*
 /.psa*
+target/
+.DS_Store
