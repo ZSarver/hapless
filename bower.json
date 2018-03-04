@@ -11,7 +11,9 @@
     "purescript-console": "^3.0.0",
     "purescript-maybe": "latest", 
     "purescript-arrays": "latest",
-    "purescript-generics": "latest"
+    "purescript-generics": "latest",
+    "rot.js": "^0.6.0",
+    "purescript-aff": "^4.0.2"
   },
   "devDependencies": {
     "purescript-psci-support": "^3.0.0"
