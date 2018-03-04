@@ -5,12 +5,12 @@ import Data.Foldable (foldr)
 import Data.StrMap as M
 
 tileSet :: String
-tileSet = "characters.png"
+tileSet = "combined_tilemap.png"
 
-type XY = { x :: Int, y :: Int }
+type TextureCoords = { x :: Int, y :: Int }
 data Tile = T String Int Int
 
-tileMap :: M.StrMap XY
+tileMap :: M.StrMap TextureCoords
 tileMap =  fromTiles 
   [ T "player_down" 4 0
   , T "player_left" 4 1
@@ -18,10 +18,10 @@ tileMap =  fromTiles
   , T "player_up" 4 3
   ]
 
-fromTiles :: Array Tile -> M.StrMap XY
+fromTiles :: Array Tile -> M.StrMap TextureCoords
 fromTiles arr = foldr f M.empty arr
   where
-    f :: Tile -> M.StrMap XY -> M.StrMap XY
+    f :: Tile -> M.StrMap TextureCoords -> M.StrMap TextureCoords
     f (T name x y) = M.insert name {x: x, y: y}
 
 
