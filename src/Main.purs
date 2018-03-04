@@ -4,10 +4,9 @@ import Prelude
 import Control.Monad.Aff.Console(CONSOLE, log)
 import Control.Monad.Eff (Eff)
 import RotFFI
-import Control.Monad.Aff
+import Control.Monad.Aff(Aff, launchAff_)
 import Control.Monad.Rec.Class(forever)
-import Control.Monad.Eff.Class (liftEff)
-import Tiles (tileSet, tileMap)
+import Tiles
 
 
 
@@ -22,9 +21,7 @@ main = launchAff_ $ do
                             }
   display <- init opts
   keyboard <- initKeyboardHandler
-  putTile "player_down" 0 0 display
-  putTile "player_left" 1 1 display
-  putTile "player_up" 2 3 display
+
   forever $ do
     key <- getKey keyboard
     logKey key
