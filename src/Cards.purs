@@ -42,10 +42,10 @@ effectCoordinates p c = do
         ycoords = zipWith (+) (map floor yoffsets) (replicate (length yoffsets) effectCenter.y)
 
 handleCardEffect :: GameState -> Card -> GameState
-handleCardEffect (GameState g) (Card c)
-    | Attack `elem` c.effect = handleAttackEffect (GameState g) (Card c)
-    | Move `elem` c.effect = handleMoveEffect (GameState g) (Card c)
-    | otherwise = GameState g
+handleCardEffect g c
+    | Attack `elem` c.effect = handleAttackEffect g c
+    | Move `elem` c.effect = handleMoveEffect g c
+    | otherwise = g
 
 handleAttackEffect :: GameState -> Card -> GameState
 handleAttackEffect g c = g { enemies = filter enemyFilter g.enemies }
@@ -56,13 +56,9 @@ handleMoveEffect :: GameState -> Card -> GameState
 handleMoveEffect g _ = g
 -- handleMoveEffect (GameState g) (Card c) = if canMove then GameState g else GameState g
 --     where
-<<<<<<< HEAD
 --         canMove
 --             | g.player.facing == North && g.player.location.y == 1 = false
 --             | g.player.facing == South && g.player.location.y == g.boundaries.height-1 = false
 --             | g.player.facing == East && g.player.location.x == g.boundaries.width-1 = false
 --             | g.player.facing == West && g.player.location.x == 1 = false
 --             | otherwise = true
-=======
---         canMove = 
->>>>>>> origin/master
