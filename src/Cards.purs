@@ -3,6 +3,7 @@ module Cards where
 import Prelude
 import CardData (Card(..), Hand, dummyCard)
 import PlayerData
+import Facing
 import EnemyData
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Array(length, drop, (!!), deleteAt, (..), zipWith, replicate)

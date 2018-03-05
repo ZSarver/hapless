@@ -6,7 +6,9 @@ import Control.Monad.Eff (Eff)
 import RotFFI
 import Control.Monad.Aff(Aff, launchAff_)
 import Control.Monad.Rec.Class(forever)
-import Tiles
+import Tiles (tileSet, tileMap)
+import Render
+import GameState (dummyGameState)
 
 
 
@@ -19,15 +21,16 @@ main = launchAff_ $ do
                             , tileMap: tileMap
                             , tileSize: 16
                             }
-  display <- init opts
-  keyboard <- initKeyboardHandler
-
+  rotjs <- initrotjs opts
   forever $ do
-    key <- getKey keyboard
+    render dummyGameState rotjs
+    key <- getKey rotjs
     logKey key
 
 logKey :: forall e. Key -> Aff (console :: CONSOLE | e) Unit
 logKey (Key k) = log (k.keyCode)
+
+
 
 
 

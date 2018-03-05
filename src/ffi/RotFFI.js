@@ -1,55 +1,65 @@
 "use strict";
 
 
-exports._init = function(options) {
-  return function () {
-    var o = Object.assign({}, options)
-    o.layout ="tile"
-    o.tileWidth = o.tileSize
-    o.tileHeight = o.tileSize
-    var tileSet = document.createElement("img")
-    tileSet.src = o.tileSet
-    o.tileSet = tileSet
-    Object.keys(o.tileMap).map( function(key) {
-      o.tileMap[key] = [o.tileMap[key].x * o.tileSize, o.tileMap[key].y * o.tileSize]
-    })
+exports._initrotjs = function() {
+  var h = 0
+  return function(options) {
+    return function () {
+      if (h) {
+        console.error("Cannot init multiple instances of rotjs")
+        return h
+      } else {
+        var o = Object.assign({}, options)
+        o.layout ="tile"
+        o.tileWidth = o.tileSize
+        o.tileHeight = o.tileSize
+        var tileSet = document.createElement("img")
+        tileSet.src = o.tileSet
+        o.tileSet = tileSet
+        Object.keys(o.tileMap).map( function(key) {
+          o.tileMap[key] = [o.tileMap[key].x * o.tileSize, o.tileMap[key].y * o.tileSize]
+        })
 
-    console.log(o)
-    var display = new ROT.Display(o);
+        h = {}
+        h.display = new ROT.Display(o);
+        h.keyCallback = function(e) { }
 
-    document.body.appendChild(display.getContainer());
-    return display
-  }
-}
+        document.addEventListener('keydown', function(event) { h.keyCallback(event) })
+        document.body.appendChild(h.display.getContainer());
+        return h
+      }}}}()
 
 exports._putTile = function(tile) {
   return function(x) {
     return function(y) {
-      return function(display) {
+      return function(h) {
         return function() {
-          display.draw(x,y,tile)
+          h.display.draw(x,y,tile)
         }}}}}
 
-exports._initKeyboardHandler = function() {
-    var handler = { handle: function(e) { } }
-    document.addEventListener('keydown', function(event) { handler.handle(event) })
-    return handler
-}
+exports._putTile2 = function(fg) {
+  return function(bg) {
+    return function(x) {
+      return function(y) {
+        return function(h) {
+          return function() {
+            h.display.draw(x,y,[bg, fg])
+          }}}}}}
 
-exports._getKey = function (handler) {
+exports._getKey = function (h) {
   return function (onError, onSuccess) {
-    handler.handle = onSuccess
+    h.keyCallback = onSuccess
     return function (cancelError, cancelerError, cancelerSuccess) {
       req.cancel()
-      handler.handle = function() {}
+      h.keyCallback = function() {}
       cancelerSuccess()
     }
   }
 }
 
-exports._clear = function(display) {
+exports._clear = function(h) {
   return function() {
-    display.clear()
+    h.display.clear()
   }
 }
 

@@ -54,6 +54,8 @@ boots1 :: String
 boots1 = "boots1"
 shield1 :: String
 shield1 = "shield1"
+floor :: String
+floor = "floor"
 
 tileMap :: M.StrMap TextureCoords
 tileMap =  fromTiles 
@@ -79,6 +81,7 @@ tileMap =  fromTiles
   , T amulet1 7 8
   , T boots1 6 18
   , T shield1 6 19
+  , T floor 13 9
   ]
 
 fromTiles :: Array Tile -> M.StrMap TextureCoords

@@ -2,18 +2,16 @@ module PlayerData where
 
 import Prelude
 import CardData (Hand(..), attack)
+import Data.Generic (class Generic, gEq)
+import Facing
   
-data Facing = North | South | East | West
-
-derive instance genericFacing :: Generic Facing
-instance eqFacing :: Eq Facing where
-  eq = geq
-
 newtype Player = Player 
     { hand :: Hand
     , location :: {x :: Int, y :: Int}
     , facing :: Facing
     }
+
+derive instance genericPlayer :: Generic Player
 
 dummyPlayer = Player {hand: [attack], location: {x: 2, y: 1}, facing: East}
 
