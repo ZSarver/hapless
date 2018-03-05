@@ -7,7 +7,8 @@ import Data.Generic (class Generic)
 type GameState =
   { player :: Player
   , enemies :: Array Enemy
+  , boundaries :: {width :: Int, height :: Int}
   }
 
 dummyGameState :: GameState
-dummyGameState = { player: dummyPlayer, enemies: [dummyEnemy] }
+dummyGameState = { player: dummyPlayer, enemies: [dummyEnemy], boundaries: {width: 6, height: 6} }

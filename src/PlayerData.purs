@@ -1,7 +1,7 @@
 module PlayerData where
 
 import Prelude
-import CardData (Hand(..), attack)
+import CardData (Hand(..), fireBomb)
 import Data.Generic (class Generic, gEq)
 import Facing
   
@@ -12,6 +12,6 @@ type Player =
     }
 
 
-dummyPlayer = {hand: [attack], location: {x: 2, y: 1}, facing: East}
+dummyPlayer = {hand: [fireBomb], location: {x: 2, y: 1}, facing: East}
 
-dummyPlayer2 = {hand: [attack], location: {x: 2, y: 1}, facing: North}
+dummyPlayer2 = {hand: [fireBomb], location: {x: 2, y: 1}, facing: North}
