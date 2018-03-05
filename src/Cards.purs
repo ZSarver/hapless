@@ -19,12 +19,12 @@ discard = discardN 1
 play :: Int -> Hand -> Hand
 play i h = fromMaybe h (fromMaybe (pure h) (discardN <$> pure c'.cost <*> h'))
     where 
-        (Card c') = fromMaybe dummyCard (h !! i)
+        c' = fromMaybe dummyCard (h !! i)
         h' = deleteAt i h
 
 -- origin is the upper left, x increases to the right, y increases down
 effectCoordinates :: Player -> Card -> Array Coordinate
-effectCoordinates (Player p) (Card c) = do
+effectCoordinates p c = do
   xc <- xcoords
   yc <- ycoords
   pure $ Coordinate {x: xc, y: yc}
@@ -41,6 +41,6 @@ effectCoordinates (Player p) (Card c) = do
         ycoords = zipWith (+) (map floor yoffsets) (replicate (length yoffsets) effectCenter.y)
 
 handleCardEffect :: Gaggle -> Player -> Card -> Gaggle
-handleCardEffect g p (Card c)
-    | c.effect == [Damage] = filter (\(Enemy e) -> (Coordinate e.location) `notElem` (effectCoordinates p (Card c))) g
+handleCardEffect g p c
+    | c.effect == [Damage] = filter (\(Enemy e) -> (Coordinate e.location) `notElem` (effectCoordinates p c)) g
     | otherwise = g

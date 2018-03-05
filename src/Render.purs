@@ -32,7 +32,7 @@ placeFloor rotjs = sequence_ $ map render1floor floorspaces
       pure {x: x, y: y}
 
 render :: forall e. GameState -> RotInstance -> Aff (rot :: ROT | e) Unit
-render (GameState gs) rotjs = do
+render gs rotjs = do
   clear rotjs
   placeWalls rotjs
   placeFloor rotjs
@@ -40,7 +40,7 @@ render (GameState gs) rotjs = do
   sequence_ $ map (flip renderEnemy rotjs) gs.enemies
 
 renderPlayer :: forall e. Player -> RotInstance -> Aff (rot :: ROT | e) Unit
-renderPlayer (Player p) rotjs = putTile2 img floor x y rotjs
+renderPlayer p rotjs = putTile2 img floor x y rotjs
   where 
     x = p.location.x
     y = p.location.y
