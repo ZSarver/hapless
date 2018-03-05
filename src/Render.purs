@@ -51,7 +51,7 @@ renderPlayer p rotjs = putTile2 img floor x y rotjs
             West -> playerLeft
 
 renderEnemy :: forall e. Enemy -> RotInstance -> Aff (rot :: ROT | e) Unit
-renderEnemy (Enemy e) rotjs = putTile2 img floor e.location.x e.location.y rotjs
+renderEnemy e rotjs = putTile2 img floor e.location.x e.location.y rotjs
   where
     img = enemyImage e.species e.facing
     enemyImage Skeleton North = skeletonUp
