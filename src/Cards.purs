@@ -20,12 +20,12 @@ discard = discardN 1
 play :: Int -> Hand -> Hand
 play i h = fromMaybe h (fromMaybe (pure h) (discardN <$> pure c'.cost <*> h'))
     where 
-        (Card c') = fromMaybe dummyCard (h !! i)
+        c' = fromMaybe dummyCard (h !! i)
         h' = deleteAt i h
 
 -- origin is the upper left, x increases to the right, y increases down
 effectCoordinates :: Player -> Card -> Array Coordinate
-effectCoordinates (Player p) (Card c) = do
+effectCoordinates p c = do
   xc <- xcoords
   yc <- ycoords
   pure $ Coordinate {x: xc, y: yc}
@@ -48,17 +48,21 @@ handleCardEffect (GameState g) (Card c)
     | otherwise = GameState g
 
 handleAttackEffect :: GameState -> Card -> GameState
-handleAttackEffect (GameState g) (Card c) = GameState g { enemies = filter enemyFilter g.enemies }
+handleAttackEffect g c = g { enemies = filter enemyFilter g.enemies }
     where
-        enemyFilter = \(Enemy e) -> (Coordinate e.location) `notElem` (effectCoordinates g.player (Card c))
+        enemyFilter = \(Enemy e) -> (Coordinate e.location) `notElem` (effectCoordinates g.player c)
 
 handleMoveEffect :: GameState -> Card -> GameState
 handleMoveEffect g _ = g
 -- handleMoveEffect (GameState g) (Card c) = if canMove then GameState g else GameState g
 --     where
+<<<<<<< HEAD
 --         canMove
 --             | g.player.facing == North && g.player.location.y == 1 = false
 --             | g.player.facing == South && g.player.location.y == g.boundaries.height-1 = false
 --             | g.player.facing == East && g.player.location.x == g.boundaries.width-1 = false
 --             | g.player.facing == West && g.player.location.x == 1 = false
 --             | otherwise = true
+=======
+--         canMove = 
+>>>>>>> origin/master
