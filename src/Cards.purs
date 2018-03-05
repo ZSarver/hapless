@@ -6,9 +6,10 @@ import PlayerData
 import Facing
 import EnemyData
 import Data.Maybe (Maybe(..), fromMaybe)
-import Data.Array(length, drop, (!!), deleteAt, (..), zipWith, replicate, filter, notElem)
+import Data.Array(length, drop, (!!), deleteAt, (..), zipWith, replicate, filter, notElem, elem)
 import Math(ceil)
 import Data.Int(toNumber, floor)
+import GameState
 
 discardN :: Int -> Hand -> Maybe Hand
 discardN n h = if (length h) < n then Nothing else Just (drop n h)
@@ -40,7 +41,18 @@ effectCoordinates (Player p) (Card c) = do
         yoffsets = map ((-) (ceil ((toNumber c.area.height) / 2.0))) (map toNumber (1..c.area.height))
         ycoords = zipWith (+) (map floor yoffsets) (replicate (length yoffsets) effectCenter.y)
 
-handleCardEffect :: Gaggle -> Player -> Card -> Gaggle
-handleCardEffect g p (Card c)
-    | c.effect == [Damage] = filter (\(Enemy e) -> (Coordinate e.location) `notElem` (effectCoordinates p (Card c))) g
-    | otherwise = g
+handleCardEffect :: GameState -> Card -> GameState
+handleCardEffect (GameState g) (Card c)
+    | Attack `elem` c.effect = handleAttackEffect (GameState g) (Card c)
+    -- | Move `elem` c.effects = handleMoveEffect (GameState g) (Card c)
+    | otherwise = GameState g
+
+handleAttackEffect :: GameState -> Card -> GameState
+handleAttackEffect (GameState g) (Card c) = GameState g { enemies = filter enemyFilter g.enemies }
+    where
+        enemyFilter = \(Enemy e) -> (Coordinate e.location) `notElem` (effectCoordinates g.player (Card c))
+
+-- handleMoveEffect :: GameState -> Card -> GameState
+-- handleMoveEffect (GameState g) (Card c) = if canMove then move else GameState g
+--     where
+--         canMove = 

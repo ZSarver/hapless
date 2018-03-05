@@ -3,7 +3,7 @@ module CardData where
 import Prelude
 import Data.Generic (class Generic, gShow, gEq)
 
-data CardEffect = Attack | Damage
+data CardEffect = Attack | Move
 
 newtype Card = Card 
     { effect :: Array CardEffect
@@ -35,12 +35,17 @@ defaultCost :: Int
 defaultCost = 3
 
 fireBomb :: Card
-fireBomb = Card { effect: [Damage], range: 4, area: {width: 3, height: 3}, duration: 1, cost: defaultCost }
+fireBomb = Card { effect: [Attack], range: 4, area: {width: 3, height: 3}, duration: 1, cost: defaultCost }
 
-attack :: Card
-attack = Card { effect: [Attack], range: 1, area: {width: 1, height: 1}, duration: 1, cost: attackCost }
+dummyAttack :: Card
+dummyAttack = Card { effect: [Attack], range: 1, area: {width: 1, height: 1}, duration: 1, cost: attackCost }
     where
         attackCost = defaultCost - 1
+
+forward1 :: Card
+forward1 = Card { effect: [Move], range: 1, area: {width: 0, height: 0}, duration: 1, cost: moveCost }
+    where
+        moveCost = defaultCost + 1
 
 -- the dummyCard is a card that has a ridiculously high cost, so that it never actually gets
 dummyCard :: Card
