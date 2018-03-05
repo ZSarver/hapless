@@ -1,14 +1,13 @@
 module Cards where
 
 import Prelude
-import CardData (Card(..), Hand, dummyCard, CardEffect(..), Coordinate(..))
+import CardData (Card(..), Hand, dummyCard, CardEffect(..))
+import Coordinate
 import PlayerData
 import Facing
 import EnemyData
 import Data.Maybe (Maybe(..), fromMaybe)
-import Data.Array(length, drop, (!!), deleteAt, (..), zipWith, replicate, filter, notElem, elem)
-import Math(ceil)
-import Data.Int(toNumber, floor)
+import Data.Array(length, drop, (!!), deleteAt, filter, notElem, elem, zipWith, replicate)
 import GameState
 
 discardN :: Int -> Hand -> Maybe Hand
@@ -36,10 +35,10 @@ effectCoordinates p c = do
             | p.facing == North = {x: p.location.x, y: p.location.y - c.range}
             | p.facing == South = {x: p.location.x, y: p.location.y + c.range}
             | otherwise = {x: p.location.x, y: p.location.y}
-        xoffsets = map ((-) (ceil ((toNumber c.area.width) / 2.0))) (map toNumber (1..c.area.width))
-        xcoords = zipWith (+) (map floor xoffsets) (replicate (length xoffsets) effectCenter.x)
-        yoffsets = map ((-) (ceil ((toNumber c.area.height) / 2.0))) (map toNumber (1..c.area.height))
-        ycoords = zipWith (+) (map floor yoffsets) (replicate (length yoffsets) effectCenter.y)
+        xoffsets = map fst c.area
+        xcoords = zipWith (+) xoffsets (replicate (length xoffsets) effectCenter.x)
+        yoffsets = map snd c.area
+        ycoords = zipWith (+) yoffsets (replicate (length yoffsets) effectCenter.y)
 
 handleCardEffect :: GameState -> Card -> GameState
 handleCardEffect g c
