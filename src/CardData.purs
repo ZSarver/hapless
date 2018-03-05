@@ -1,7 +1,7 @@
 module CardData where
 
 import Prelude
-import Data.Generic (class Generic, gShow)
+import Data.Generic (class Generic, gShow, gEq)
 
 data CardEffect = Attack | Damage
 
@@ -15,6 +15,8 @@ newtype Card = Card
 
 type Hand = Array Card
 
+newtype Coordinate = Coordinate {x :: Int, y :: Int}
+
 derive instance genericCard :: Generic Card
 instance showCard :: Show Card where
     show = gShow
@@ -22,6 +24,12 @@ instance showCard :: Show Card where
 derive instance genericCardEffect :: Generic CardEffect
 instance showCardEffect :: Show CardEffect where
     show = gShow
+instance eqCardEffect :: Eq CardEffect where
+    eq = gEq
+
+derive instance genericCoordinate :: Generic Coordinate
+instance eqCoordinate :: Eq Coordinate where
+    eq = gEq
 
 defaultCost :: Int
 defaultCost = 3

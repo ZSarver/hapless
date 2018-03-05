@@ -1,12 +1,12 @@
 module Cards where
 
 import Prelude
-import CardData (Card(..), Hand, dummyCard)
+import CardData (Card(..), Hand, dummyCard, CardEffect(..), Coordinate(..))
 import PlayerData
 import Facing
 import EnemyData
 import Data.Maybe (Maybe(..), fromMaybe)
-import Data.Array(length, drop, (!!), deleteAt, (..), zipWith, replicate)
+import Data.Array(length, drop, (!!), deleteAt, (..), zipWith, replicate, filter, notElem)
 import Math(ceil)
 import Data.Int(toNumber, floor)
 
@@ -23,11 +23,11 @@ play i h = fromMaybe h (fromMaybe (pure h) (discardN <$> pure c'.cost <*> h'))
         h' = deleteAt i h
 
 -- origin is the upper left, x increases to the right, y increases down
-effectCoordinates :: Player -> Card -> Array {x :: Int, y :: Int}
+effectCoordinates :: Player -> Card -> Array Coordinate
 effectCoordinates (Player p) (Card c) = do
   xc <- xcoords
   yc <- ycoords
-  pure {x: xc, y: yc}
+  pure $ Coordinate {x: xc, y: yc}
     where 
         effectCenter
             | p.facing == East = {x: p.location.x + c.range, y: p.location.y}
@@ -39,3 +39,8 @@ effectCoordinates (Player p) (Card c) = do
         xcoords = zipWith (+) (map floor xoffsets) (replicate (length xoffsets) effectCenter.x)
         yoffsets = map ((-) (ceil ((toNumber c.area.height) / 2.0))) (map toNumber (1..c.area.height))
         ycoords = zipWith (+) (map floor yoffsets) (replicate (length yoffsets) effectCenter.y)
+
+handleCardEffect :: Gaggle -> Player -> Card -> Gaggle
+handleCardEffect g p (Card c)
+    | c.effect == [Damage] = filter (\(Enemy e) -> (Coordinate e.location) `notElem` (effectCoordinates p (Card c))) g
+    | otherwise = g
