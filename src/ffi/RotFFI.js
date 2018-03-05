@@ -29,6 +29,13 @@ exports._initrotjs = function() {
         return h
       }}}}()
 
+exports._ready = function(onError, onSuccess) {
+  window.setTimeout(onSuccess, 250)
+  return function (cancelError, cancelerError, cancelerSuccess) {
+    cancelerSuccess()
+  }
+}
+
 exports._putTile = function(tile) {
   return function(x) {
     return function(y) {

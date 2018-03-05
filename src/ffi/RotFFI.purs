@@ -18,9 +18,17 @@ newtype DisplayOptions = DisplayOptions
   , tileSize :: Int
   }
 
+
+foreign import _ready :: forall e. EffFnAff (rot :: ROT | e) Unit
+ready :: forall e. Aff (rot :: ROT | e) Unit
+ready = fromEffFnAff _ready
+
 foreign import _initrotjs :: forall e. DisplayOptions -> Eff (rot :: ROT | e) RotInstance
 initrotjs :: forall e. DisplayOptions -> Aff (rot :: ROT | e) RotInstance
-initrotjs = liftEff <<< _initrotjs
+initrotjs opts = do
+  rotjs <- liftEff $ _initrotjs opts
+  ready
+  pure rotjs
 
 foreign import _clear :: forall e. RotInstance -> Eff (rot :: ROT | e) Unit
 clear :: forall e. RotInstance -> Aff (rot :: ROT | e) Unit
