@@ -50,7 +50,7 @@ handleCardEffect (GameState g) (Card c)
 handleAttackEffect :: GameState -> Card -> GameState
 handleAttackEffect g c = g { enemies = filter enemyFilter g.enemies }
     where
-        enemyFilter = \(Enemy e) -> (Coordinate e.location) `notElem` (effectCoordinates g.player c)
+        enemyFilter = \e -> (Coordinate e.location) `notElem` (effectCoordinates g.player c)
 
 handleMoveEffect :: GameState -> Card -> GameState
 handleMoveEffect g _ = g
