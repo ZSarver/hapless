@@ -56,15 +56,20 @@ handleAttackEffect (GameState g) c = GameState $ g { enemies = filter enemyFilte
         enemyFilter (Enemy e) = e.location `notElem` (effectCoordinates g.player c)
 
 handleMoveEffect :: GameState -> Card -> GameState
-handleMoveEffect g _ = g
--- handleMoveEffect g c = if canMove then moved else g
---     where
---         canMove
---             | g.player.facing == North && g.player.location.y == 1 = false
---             | g.player.facing == South && g.player.location.y == g.boundaries.height-1 = false
---             | g.player.facing == East && g.player.location.x == g.boundaries.width-1 = false
---             | g.player.facing == West && g.player.location.x == 1 = false
---             | otherwise = true
---         moved
---             -- | g.player.facing == North = g { player { location { y = g.player.location.y - 1 } } }
---             | otherwise g
+handleMoveEffect (GameState g) c = if canMove then moved else (GameState g)
+    where
+        (Player p) = g.player
+        (XY l) = p.location
+        (Box b) = g.boundaries
+        canMove
+            | p.facing == North && l.y == 1 = false
+            | p.facing == South && l.y == b.height-1 = false
+            | p.facing == East && l.x == b.width-1 = false
+            | p.facing == West && l.x == 1 = false
+            | otherwise = true
+        moved
+            | p.facing == North = setLocation (GameState g) (XY {x: l.x, y: (l.y - 1)})
+            | p.facing == South = setLocation (GameState g) (XY {x: l.x, y: (l.y + 1)})
+            | p.facing == East = setLocation (GameState g) (XY {x: (l.x + 1), y: l.y})
+            | p.facing == West = setLocation (GameState g) (XY {x: (l.x - 1), y: l.y})
+            | otherwise = (GameState g)
