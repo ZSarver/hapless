@@ -8,9 +8,7 @@ import EnemyData
 import XY
 import Box
 import Data.Maybe (Maybe(..), fromMaybe)
-import Data.Array(length, drop, (!!), deleteAt, (..), zipWith, replicate, filter, notElem, elem)
-import Math(ceil)
-import Data.Int(toNumber, floor)
+import Data.Array(length, drop, (!!), deleteAt, filter, notElem, elem, zipWith, replicate)
 import GameState
 import Data.Newtype (un)
 
@@ -41,16 +39,15 @@ effectCoordinates (Player p) (Card c) = do
             | p.facing == North = XY {x: ploc.x, y: ploc.y - c.range}
             | p.facing == South = XY {x: ploc.x, y: ploc.y + c.range}
             | otherwise = XY {x: ploc.x, y: ploc.y}
-        area = un Box (c.area)
-        xoffsets = map ((-) (ceil ((toNumber area.width) / 2.0))) (map toNumber (1..area.width))
-        xcoords = zipWith (+) (map floor xoffsets) (replicate (length xoffsets) (un XY effectCenter).x)
-        yoffsets = map ((-) (ceil ((toNumber area.height) / 2.0))) (map toNumber (1..area.height))
-        ycoords = zipWith (+) (map floor yoffsets) (replicate (length yoffsets) (un XY effectCenter).y)
+        xoffsets = map fst c.area
+        xcoords = zipWith (+) xoffsets (replicate (length xoffsets) (fst effectCenter))
+        yoffsets = map snd c.area
+        ycoords = zipWith (+) yoffsets (replicate (length yoffsets) (snd effectCenter))
 
 handleCardEffect :: GameState -> Card -> GameState
 handleCardEffect g card@(Card c)
     | Attack `elem` c.effect = handleAttackEffect g card
-    -- | Move `elem` c.effects = handleMoveEffect (GameState g) (Card c)
+    | Move `elem` c.effect = handleMoveEffect g card
     | otherwise = g
 
 handleAttackEffect :: GameState -> Card -> GameState
@@ -58,7 +55,13 @@ handleAttackEffect (GameState g) c = GameState $ g { enemies = filter enemyFilte
     where
         enemyFilter (Enemy e) = e.location `notElem` (effectCoordinates g.player c)
 
--- handleMoveEffect :: GameState -> Card -> GameState
--- handleMoveEffect (GameState g) (Card c) = if canMove then move else GameState g
+handleMoveEffect :: GameState -> Card -> GameState
+handleMoveEffect g _ = g
+-- handleMoveEffect (GameState g) (Card c) = if canMove then GameState g else GameState g
 --     where
---         canMove = 
+--         canMove
+--             | g.player.facing == North && g.player.location.y == 1 = false
+--             | g.player.facing == South && g.player.location.y == g.boundaries.height-1 = false
+--             | g.player.facing == East && g.player.location.x == g.boundaries.width-1 = false
+--             | g.player.facing == West && g.player.location.x == 1 = false
+--             | otherwise = true
