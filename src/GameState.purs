@@ -5,6 +5,11 @@ import Batteries
 import Box
 import PlayerData (Player, dummyPlayer)
 import EnemyData (Enemy, dummyEnemy)
+import Data.Maybe
+import Data.Identity
+import Control.Monad.Except.Trans
+import Data.Either
+
 
 newtype GameState = GameState
   { player :: Player
@@ -19,8 +24,10 @@ instance showGameState :: Show GameState where
 serialize :: GameState -> String
 serialize g = genericEncodeJSON defaultOptions g
 
-deserialize :: String -> _ GameState
-deserialize s = genericDecodeJSON defaultOptions s
+deserialize :: String -> Maybe GameState
+deserialize s = case un Identity (runExceptT (genericDecodeJSON defaultOptions s)) of
+  Right x -> Just x
+  Left _ -> Nothing
 
 
 dummyGameState :: GameState

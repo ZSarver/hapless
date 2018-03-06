@@ -42,7 +42,7 @@ foreign import _putTile2 :: forall e. String -> String -> Int -> Int -> RotInsta
 putTile2 :: forall e. String -> String -> Int -> Int -> RotInstance -> Aff (rot :: ROT | e) Unit  
 putTile2 fg bg x y d = liftEff $ _putTile2 fg bg x y d
 
-newtype Key = Key { keyCode :: String }
+newtype Key = Key { keyCode :: Int }
 foreign import _getKey :: forall e. RotInstance -> EffFnAff (rot :: ROT | e) Key
 getKey :: forall e. RotInstance -> Aff (rot :: ROT | e) Key
 getKey = fromEffFnAff <<< _getKey

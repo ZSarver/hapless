@@ -16,7 +16,7 @@ import Data.Foreign.Class (class Encode, class Decode)
 import Data.Foreign.Generic (genericEncode, genericDecode, genericEncodeJSON, genericDecodeJSON)
 import Data.Foreign.Generic as G
 import Data.Generic.Rep.Eq (genericEq)
-import Data.Newtype (class Newtype)
+import Data.Newtype (class Newtype, un)
 
 
 defaultOptions = G.defaultOptions { unwrapSingleConstructors = true }
