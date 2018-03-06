@@ -2,8 +2,22 @@ module Content.Cards where
 
 import Batteries
 
-import Box
-import XY
+import XY (XY, dummyCoordinate, rectangle)
+
+-- to make serialized game state smaller
+data ShortCard = FireBomb | Advance | Punch
+
+derive instance genericShortCard :: Generic ShortCard _
+instance showShortCard :: Show ShortCard where show = genericShow
+instance encodeShortCard :: Encode ShortCard where encode = genericEncode defaultOptions
+instance decodeShortCard :: Decode ShortCard where decode = genericDecode defaultOptions
+instance eqShortCard :: Eq ShortCard where eq = genericEq
+
+card :: ShortCard -> Card
+card c = case c of
+  FireBomb -> fireBomb
+  Advance -> forward1
+  Punch -> dummyAttack
 
 
 newtype Card = Card
@@ -22,7 +36,7 @@ instance encodeCard :: Encode Card where encode = genericEncode defaultOptions
 instance decodeCard :: Decode Card where decode = genericDecode defaultOptions
 instance eqCard :: Eq Card where eq = genericEq
 
-type Hand = Array Card
+type Hand = Array ShortCard
 
 data CardEffect = Attack | Move
 

@@ -1,7 +1,7 @@
 module PlayerData where
 
 import Batteries
-import Content.Cards (Hand(..), fireBomb)
+import Content.Cards (Hand(..), ShortCard(..))
 import Facing
 import XY
 newtype Player = Player
@@ -18,6 +18,6 @@ instance decodePlayer :: Decode Player where decode = genericDecode defaultOptio
 instance eqPlayer :: Eq Player where eq = genericEq
 
 
-dummyPlayer = Player {hand: [fireBomb], location: XY {x: 2, y: 1}, facing: East}
+dummyPlayer = Player {hand: [FireBomb], location: XY {x: 2, y: 1}, facing: East}
 
-dummyPlayer2 = Player {hand: [fireBomb], location: XY {x: 2, y: 1}, facing: North}
+dummyPlayer2 = Player {hand: [FireBomb], location: XY {x: 2, y: 1}, facing: North}

@@ -1,7 +1,7 @@
 module Cards where
 
 import Prelude
-import Content.Cards (Card(..), Hand, dummyCard, CardEffect(..))
+import Content.Cards (Card(..), Hand, dummyCard, CardEffect(..), card)
 import PlayerData
 import Facing
 import Content.Enemies
@@ -21,7 +21,7 @@ discard = discardN 1
 play :: Int -> Hand -> Hand
 play i h = fromMaybe h (fromMaybe (pure h) (discardN <$> pure c'.cost <*> h'))
     where 
-        (Card c') = fromMaybe dummyCard (h !! i)
+        (Card c') = fromMaybe dummyCard (map card $ h !! i)
         h' = deleteAt i h
 
 -- origin is the upper left, x increases to the right, y increases down
