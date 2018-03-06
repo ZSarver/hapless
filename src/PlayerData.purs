@@ -1,17 +1,23 @@
 module PlayerData where
 
-import Prelude
+import Batteries
 import CardData (Hand(..), fireBomb)
-import Data.Generic (class Generic, gEq)
 import Facing
-  
-type Player = 
+import XY
+newtype Player = Player
     { hand :: Hand
-    , location :: {x :: Int, y :: Int}
+    , location :: XY
     , facing :: Facing
     }
 
+derive instance newtypePlayer :: Newtype Player _
+derive instance genericPlayer :: Generic Player _
+instance showPlayer :: Show Player where show = genericShow
+instance encodePlayer :: Encode Player where encode = genericEncode defaultOptions
+instance decodePlayer :: Decode Player where decode = genericDecode defaultOptions
+instance eqPlayer :: Eq Player where eq = genericEq
 
-dummyPlayer = {hand: [fireBomb], location: {x: 2, y: 1}, facing: East}
 
-dummyPlayer2 = {hand: [fireBomb], location: {x: 2, y: 1}, facing: North}
+dummyPlayer = Player {hand: [fireBomb], location: XY {x: 2, y: 1}, facing: East}
+
+dummyPlayer2 = Player {hand: [fireBomb], location: XY {x: 2, y: 1}, facing: North}
