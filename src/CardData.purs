@@ -1,11 +1,7 @@
 module CardData where
 
-import Prelude
-import Data.Generic.Rep (class Generic)
-import Data.Generic.Rep.Show (genericShow)
-import Data.Foreign.Class (class Encode)
-import Data.Foreign.Generic (genericEncode, defaultOptions)
-import Data.Generic.Rep.Eq (genericEq)
+import Batteries
+
 import Box
 import XY
 
@@ -18,9 +14,12 @@ newtype Card = Card
     , cost :: Int
     }
 
+
+derive instance newtypeCard :: Newtype Card _
 derive instance genericCard :: Generic Card _
 instance showCard :: Show Card where show = genericShow
 instance encodeCard :: Encode Card where encode = genericEncode defaultOptions
+instance decodeCard :: Decode Card where decode = genericDecode defaultOptions
 instance eqCard :: Eq Card where eq = genericEq
 
 type Hand = Array Card
@@ -30,6 +29,7 @@ data CardEffect = Attack | Move
 derive instance genericCardEffect :: Generic CardEffect _
 instance showCardEffect :: Show CardEffect where show = genericShow
 instance encodeCardEffect :: Encode CardEffect where encode = genericEncode defaultOptions
+instance decodeCardEffect :: Decode CardEffect where decode = genericDecode defaultOptions
 instance eqCardEffect :: Eq CardEffect where eq = genericEq
 
 defaultCost :: Int

@@ -1,27 +1,38 @@
 module EnemyData where
 
-import Prelude (class Show)
+import Prelude (class Show, class Eq)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
-import Data.Foreign.Class (class Encode)
-import Data.Foreign.Generic (genericEncode, defaultOptions)
+import Data.Foreign.Class (class Encode, class Decode)
+import Data.Foreign.Generic (genericEncode, genericDecode, defaultOptions)
+import Data.Generic.Rep.Eq (genericEq)
+import Data.Newtype (class Newtype)
 import Facing
 import XY
 
 data Species = Skeleton | Ghost | Slime
+
 derive instance genericSpecies :: Generic Species _
-instance encodeSpecies :: Encode Species where encode = genericEncode defaultOptions
 instance showSpecies :: Show Species where show = genericShow
+instance encodeSpecies :: Encode Species where encode = genericEncode defaultOptions
+instance decodeSpecies :: Decode Species where decode = genericDecode defaultOptions
+instance eqSpecies :: Eq Species where eq = genericEq
 
 data MoveBehavior = Whatever
+
 derive instance genericMoveBehavior :: Generic MoveBehavior _
-instance encodeMoveBehvior :: Encode MoveBehavior where encode = genericEncode defaultOptions
 instance showMoveBehavior :: Show MoveBehavior where show = genericShow
+instance encodeMoveBehavior :: Encode MoveBehavior where encode = genericEncode defaultOptions
+instance decodeMoveBehavior :: Decode MoveBehavior where decode = genericDecode defaultOptions
+instance eqMoveBehavior :: Eq MoveBehavior where eq = genericEq
 
 data AttackBehavior = Smash | Rend | Befuddle
+
 derive instance genericAttackBehavior :: Generic AttackBehavior _
-instance encodeAttackBehvior :: Encode AttackBehavior where encode = genericEncode defaultOptions
 instance showAttackBehavior :: Show AttackBehavior where show = genericShow
+instance encodeAttackBehavior :: Encode AttackBehavior where encode = genericEncode defaultOptions
+instance decodeAttackBehavior :: Decode AttackBehavior where decode = genericDecode defaultOptions
+instance eqAttackBehavior :: Eq AttackBehavior where eq = genericEq
 
 newtype Enemy = Enemy
     { species :: Species
@@ -31,9 +42,12 @@ newtype Enemy = Enemy
     , facing :: Facing
     }
 
+derive instance newtypeEnemy :: Newtype Enemy _
 derive instance genericEnemy :: Generic Enemy _
-instance encodeEnemy :: Encode Enemy where encode = genericEncode defaultOptions
 instance showEnemy :: Show Enemy where show = genericShow
+instance encodeEnemy :: Encode Enemy where encode = genericEncode defaultOptions
+instance decodeEnemy :: Decode Enemy where decode = genericDecode defaultOptions
+instance eqEnemy :: Eq Enemy where eq = genericEq
 
 type Gaggle = Array Enemy
 
