@@ -1,12 +1,7 @@
-module EnemyData where
+module Content.Enemies where
 
-import Prelude (class Show, class Eq)
-import Data.Generic.Rep (class Generic)
-import Data.Generic.Rep.Show (genericShow)
-import Data.Foreign.Class (class Encode, class Decode)
-import Data.Foreign.Generic (genericEncode, genericDecode, defaultOptions)
-import Data.Generic.Rep.Eq (genericEq)
-import Data.Newtype (class Newtype)
+import Batteries 
+
 import Facing
 import XY
 

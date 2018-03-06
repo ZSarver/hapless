@@ -1,4 +1,4 @@
-module Tiles where
+module Content.Tiles where
 
 import Prelude
 import Data.Foldable (foldr)

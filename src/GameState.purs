@@ -4,7 +4,7 @@ import Batteries
 
 import Box
 import PlayerData (Player(..), dummyPlayer)
-import EnemyData (Enemy, dummyEnemy)
+import Content.Enemies (Enemy, dummyEnemy)
 import Data.Maybe
 import Data.Identity
 import Control.Monad.Except.Trans

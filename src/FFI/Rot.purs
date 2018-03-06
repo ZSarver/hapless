@@ -1,4 +1,4 @@
-module RotFFI where
+module FFI.Rot where
 
 import Prelude
 import Control.Monad.Eff (Eff, kind Effect)

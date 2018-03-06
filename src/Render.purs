@@ -3,12 +3,12 @@ module Render where
 import Prelude
 import GameState
 import PlayerData
-import EnemyData
+import Content.Enemies
 import Facing
 import XY
-import RotFFI (ROT, RotInstance, clear, putTile, putTile2)
+import FFI.Rot (ROT, RotInstance, clear, putTile, putTile2)
 import Control.Monad.Aff
-import Tiles
+import Content.Tiles
 import Data.Array
 import Data.Traversable (sequence_)
 

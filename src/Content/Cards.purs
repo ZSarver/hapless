@@ -1,4 +1,4 @@
-module CardData where
+module Content.Cards where
 
 import Batteries
 

@@ -1,7 +1,7 @@
 module PlayerData where
 
 import Batteries
-import CardData (Hand(..), fireBomb)
+import Content.Cards (Hand(..), fireBomb)
 import Facing
 import XY
 newtype Player = Player

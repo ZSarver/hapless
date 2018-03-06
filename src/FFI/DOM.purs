@@ -1,4 +1,4 @@
-module DOMFFI where
+module FFI.DOM where
 
 import Prelude
 import Control.Monad.Eff (Eff, kind Effect)

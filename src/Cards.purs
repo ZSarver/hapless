@@ -1,10 +1,10 @@
 module Cards where
 
 import Prelude
-import CardData (Card(..), Hand, dummyCard, CardEffect(..))
+import Content.Cards (Card(..), Hand, dummyCard, CardEffect(..))
 import PlayerData
 import Facing
-import EnemyData
+import Content.Enemies
 import XY
 import Box
 import Data.Maybe (Maybe(..), fromMaybe)
