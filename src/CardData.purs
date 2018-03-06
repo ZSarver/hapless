@@ -9,6 +9,7 @@ data CardEffect = Attack | Move
 type Card = 
     { effect :: Array CardEffect
     , range :: Int
+    , area :: Array Coordinate -- array of offsets, x coord is front <-> back, y coord is left <-> right relative to facing
     , duration :: Int
     , cost :: Int
     }

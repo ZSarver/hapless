@@ -53,7 +53,7 @@ handleAttackEffect g c = g { enemies = filter enemyFilter g.enemies }
 
 handleMoveEffect :: GameState -> Card -> GameState
 handleMoveEffect g _ = g
--- handleMoveEffect (GameState g) (Card c) = if canMove then GameState g else GameState g
+-- handleMoveEffect g c = if canMove then moved else g
 --     where
 --         canMove
 --             | g.player.facing == North && g.player.location.y == 1 = false
@@ -61,3 +61,6 @@ handleMoveEffect g _ = g
 --             | g.player.facing == East && g.player.location.x == g.boundaries.width-1 = false
 --             | g.player.facing == West && g.player.location.x == 1 = false
 --             | otherwise = true
+--         moved
+--             -- | g.player.facing == North = g { player { location { y = g.player.location.y - 1 } } }
+--             | otherwise g
