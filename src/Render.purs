@@ -1,14 +1,16 @@
 module Render where
 
 import Prelude
+import Data.Tuple
 import GameState
 import PlayerData
 import Content.Enemies
+import Content.Cards
+import Content.Tiles
 import Facing
 import XY
-import FFI.Rot (ROT, RotInstance, clear, putTile, putTile2)
+import FFI.Rot (ROT, RotInstance, clear, putTile, putTile2, putText)
 import Control.Monad.Aff
-import Content.Tiles
 import Data.Array
 import Data.Traversable (sequence_)
 
@@ -38,6 +40,7 @@ render (GameState gs) rotjs = do
   placeWalls rotjs
   placeFloor rotjs
   renderPlayer gs.player rotjs
+  renderCards gs.hand rotjs
   sequence_ $ map (flip renderEnemy rotjs) gs.enemies
 
 renderPlayer :: forall e. Player -> RotInstance -> Aff (rot :: ROT | e) Unit
@@ -51,6 +54,9 @@ renderPlayer (Player p) rotjs = putTile2 img floor x y rotjs
             South -> playerDown
             East -> playerRight
             West -> playerLeft
+
+renderCards :: forall e. Array ShortCard -> RotInstance -> Aff (rot :: ROT | e) Unit
+renderCards cards rotjs = pure unit
 
 renderEnemy :: forall e. Enemy -> RotInstance -> Aff (rot :: ROT | e) Unit
 renderEnemy (Enemy e) rotjs = putTile2 img floor loc.x loc.y rotjs

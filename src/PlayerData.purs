@@ -5,8 +5,7 @@ import Content.Cards (Hand(..), ShortCard(..))
 import Facing
 import XY
 newtype Player = Player
-    { hand :: Hand
-    , location :: XY
+    { location :: XY
     , facing :: Facing
     }
 
@@ -18,6 +17,6 @@ instance decodePlayer :: Decode Player where decode = genericDecode defaultOptio
 instance eqPlayer :: Eq Player where eq = genericEq
 
 
-dummyPlayer = Player {hand: [FireBomb], location: XY {x: 2, y: 1}, facing: East}
+dummyPlayer = Player { location: XY {x: 2, y: 1}, facing: East }
 
-dummyPlayer2 = Player {hand: [FireBomb], location: XY {x: 2, y: 1}, facing: North}
+dummyPlayer2 = Player { location: XY {x: 2, y: 1}, facing: North }
