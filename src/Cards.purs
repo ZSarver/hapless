@@ -1,11 +1,12 @@
 module Cards where
 
-import Prelude
+import Batteries
+
 import Content.Cards (Card(..), Hand, dummyCard, CardEffect(..), card)
-import PlayerData
-import Facing
+import PlayerData (Player(..))
+import Facing (Facing(..))
 import Content.Enemies
-import XY
+import XY (XY(..), fst, snd)
 import Box
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Array(length, drop, (!!), deleteAt, filter, notElem, elem, zipWith, replicate)

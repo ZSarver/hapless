@@ -4,6 +4,7 @@ import Batteries
 
 import Facing
 import XY
+import Data.Generic.Rep.Ord (genericCompare)
 
 data Species = Skeleton | Ghost | Slime
 
@@ -12,6 +13,7 @@ instance showSpecies :: Show Species where show = genericShow
 instance encodeSpecies :: Encode Species where encode = genericEncode defaultOptions
 instance decodeSpecies :: Decode Species where decode = genericDecode defaultOptions
 instance eqSpecies :: Eq Species where eq = genericEq
+instance ordSpecies :: Ord Species where compare = genericCompare
 
 data MoveBehavior = Whatever
 
@@ -32,9 +34,9 @@ instance eqAttackBehavior :: Eq AttackBehavior where eq = genericEq
 newtype Enemy = Enemy
     { species :: Species
     , location :: XY
-    , moveBehavior :: MoveBehavior
-    , attackBehavior :: AttackBehavior
     , facing :: Facing
+    --    , moveBehavior :: MoveBehavior       instead of keeping these here, we can put them in a lookup (Species -> Behavior)
+    --    , attackBehavior :: AttackBehavior       that lives higher up in the game state
     }
 
 derive instance newtypeEnemy :: Newtype Enemy _
@@ -48,6 +50,6 @@ type Gaggle = Array Enemy
 
 -- a dummy enemy for testing purposes
 dummyEnemy :: Enemy
-dummyEnemy = Enemy { species: Skeleton, location: XY {x: 6, y: 2}, moveBehavior: Whatever, attackBehavior: Smash, facing: South}
+dummyEnemy = Enemy { species: Skeleton, location: XY {x: 6, y: 2}, facing: South}
 
-dummyEnemy2 = Enemy { species: Slime, location: XY {x: 1, y: 2}, moveBehavior: Whatever, attackBehavior: Rend, facing: West }
+dummyEnemy2 = Enemy { species: Slime, location: XY {x: 1, y: 2}, facing: West }

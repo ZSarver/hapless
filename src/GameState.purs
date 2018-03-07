@@ -5,6 +5,7 @@ import Batteries
 import Box
 import PlayerData (Player(..), dummyPlayer)
 import Content.Enemies (Enemy, dummyEnemy)
+import Bestiary
 import Data.Maybe
 import Data.Identity
 import Control.Monad.Except.Trans
@@ -17,6 +18,7 @@ import Data.Either
 newtype GameState = GameState
   { player :: Player
   , enemies :: Array Enemy
+  , bestiary :: Bestiary
   , boundaries :: Box
   }
 
@@ -48,4 +50,9 @@ locationLens :: Lens' GameState XY
 locationLens = lens (getLocation) (setLocation)
 
 dummyGameState :: GameState
-dummyGameState = GameState { player: dummyPlayer, enemies: [dummyEnemy], boundaries: Box {width: 6, height: 6} }
+dummyGameState = GameState 
+  { player: dummyPlayer
+  , enemies: [dummyEnemy]
+  , bestiary: dummyBestiary 
+  , boundaries: Box {width: 6, height: 6}
+  }
