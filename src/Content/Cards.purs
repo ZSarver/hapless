@@ -16,6 +16,7 @@ card c = case c of
   Advance -> Card { effect: [AttackMove forward], cost: 2 }
   TurnLeft -> Card { effect: [Rotate 1], cost: 2 }
   TurnRight -> Card { effect: [Rotate 3], cost: 2 }
+  _ -> dummyAttack
 
 forward :: XY
 forward = XY { x:1, y:0 }
