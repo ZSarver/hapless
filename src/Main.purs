@@ -11,10 +11,13 @@ import Control.Monad.Rec.Class(forever)
 import Control.Monad.Eff.Class (liftEff)
 import Content.Tiles (tileSet, tileMap)
 import Render (render)
-import GameState (GameState, dummyGameState, serialize, deserialize)
-import Data.Maybe (Maybe(..))
+import GameState (GameState(..), dummyGameState, serialize, deserialize)
+import Data.Maybe (Maybe(..), fromMaybe)
 import Control.Monad.State.Trans (get, modify, runStateT)
 import Control.Monad.Aff.Class (liftAff)
+import Data.Array((!!))
+import Cards(play, handleCardEffect)
+import Content.Cards(card, ShortCard(..))
 
 main :: forall e. Eff ( console :: CONSOLE, rot :: ROT, dom :: DOM | e) Unit
 main = launchAff_ $ do
@@ -47,7 +50,7 @@ handleKey (Key key) debug = do
     k :: Int
     k = key.keyCode
     action 
-      | k == 192 = do
+      | k == debugLoadState = do
         gs <- liftEff $ map deserialize $ fromDebug debug
         log "loading"
         case gs of 
@@ -55,6 +58,8 @@ handleKey (Key key) debug = do
           Nothing -> do
             log "load failed"
             pure Nothing
+      | k == one = do
+        pure $ Just $ (flip play) 1
       | otherwise = do
           log (show k)
           pure Nothing
@@ -63,3 +68,26 @@ handleKey (Key key) debug = do
 debugLoadState :: Int
 debugLoadState = 192
 
+-- 0
+zero :: Int
+zero = 48
+
+-- 1
+one :: Int
+one = 49
+
+-- 2
+two :: Int
+two = 50
+
+-- 3
+three :: Int
+three = 51
+
+-- 4
+four :: Int
+four = 52
+
+-- 5
+five :: Int
+five = 53

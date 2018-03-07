@@ -23,6 +23,7 @@ fromRs rs = Bestiary ( fromFoldable $ map f rs)
 instance showBestiary :: Show Bestiary where show b = show (toRs b)
 instance encodeBestiary :: Encode Bestiary where encode b = encode (toRs b)
 instance decodeBestiary :: Decode Bestiary where decode x = map (fromRs) (decode x)
+instance eqBesiary :: Eq Bestiary where eq x y = (toRs x) == (toRs y)
 
 dummyBestiary :: Bestiary
 dummyBestiary = fromRs 

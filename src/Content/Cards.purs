@@ -5,7 +5,7 @@ import Batteries
 import XY (XY, dummyCoordinate, rectangle)
 
 -- to make serialized game state smaller
-data ShortCard = FireBomb | Advance | Punch
+data ShortCard = FireBomb | Advance | Punch | Whiff
 
 derive instance genericShortCard :: Generic ShortCard _
 instance showShortCard :: Show ShortCard where show = genericShow
@@ -18,6 +18,7 @@ card c = case c of
   FireBomb -> fireBomb
   Advance -> forward1
   Punch -> dummyAttack
+  _ -> dummyAttack
 
 
 newtype Card = Card

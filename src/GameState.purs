@@ -26,7 +26,9 @@ newtype GameState = GameState
 
 derive instance genericGameState :: Generic GameState _
 instance showGameState :: Show GameState where 
-  show = genericShow
+  show = genericShow 
+instance eqGameState :: Eq GameState where
+  eq = genericEq
 
 serialize :: GameState -> String
 serialize g = genericEncodeJSON defaultOptions g
@@ -54,7 +56,7 @@ locationLens = lens (getLocation) (setLocation)
 dummyGameState :: GameState
 dummyGameState = GameState 
   { player: dummyPlayer
-  , hand: [FireBomb, Advance, FireBomb]
+  , hand: [FireBomb, Advance, FireBomb, Advance, FireBomb]
   , enemies: [dummyEnemy]
   , bestiary: dummyBestiary 
   , boundaries: Box {width: 6, height: 6}

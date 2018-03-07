@@ -19,11 +19,14 @@ discardN n h = if (length h) < n then Nothing else Just (drop n h)
 discard :: Hand -> Maybe Hand
 discard = discardN 1
 
-play :: Int -> Hand -> Hand
-play i h = fromMaybe h (fromMaybe (pure h) (discardN <$> pure c'.cost <*> h'))
+play :: GameState -> Int -> GameState
+play (GameState g) i = if (GameState g) /= g' then handleCardEffect g' (Card c') else (GameState g)
     where 
+        h = g.hand
         (Card c') = fromMaybe dummyCard (map card $ h !! i)
         h' = deleteAt i h
+        h'' = fromMaybe h (fromMaybe (pure h) (discardN <$> pure c'.cost <*> h'))
+        g' = GameState (g {hand = h''})
 
 -- origin is the upper left, x increases to the right, y increases down
 effectCoordinates :: Player -> Card -> Array XY

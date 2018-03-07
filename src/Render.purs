@@ -9,7 +9,7 @@ import Content.Cards
 import Content.Tiles
 import Facing
 import XY
-import FFI.Rot (ROT, RotInstance, clear, putTile, putTile2, putText)
+import FFI.Rot (ROT, RotInstance, clear, putTile, putTile2)
 import Control.Monad.Aff
 import Data.Array
 import Data.Traversable (sequence_)
