@@ -24,8 +24,9 @@ exports._initrotjs = function() {
         h.display = new ROT.Display(o);
         h.keyCallback = function(e) { }
 
+
         document.addEventListener('keydown', function(event) { h.keyCallback(event) })
-        document.body.appendChild(h.display.getContainer());
+        document.getElementById("display").appendChild(h.display.getContainer());
         return h
       }}}}()
 

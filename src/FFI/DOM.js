@@ -1,9 +1,28 @@
 "use strict";
 
 exports.debugBox = function() {
+  var debug = document.getElementById("debug")
   var d = document.createElement("textarea")
-  document.body.append(d)
+  debug.append(d) 
   return d
+}
+
+exports.putCardText = function(cardNumber) {
+  return function(text) {
+    return function() {
+      var s = "card " + cardNumber
+      var div = document.getElementById("card " + cardNumber)
+      div.innerText = text
+    }
+  }
+}
+
+exports.clearCardText = function(cardNumber) {
+  return function() {
+    var s = "card " + cardNumber
+    var div = document.getElementById("card " + cardNumber)
+    div.innerText = ""
+  }
 }
 
 exports.toDebug = function(text) {
