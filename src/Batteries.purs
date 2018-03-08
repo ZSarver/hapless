@@ -18,7 +18,7 @@ import Data.Foreign.Generic (genericEncode, genericDecode, genericEncodeJSON, ge
 import Data.Foreign.Generic as G
 import Data.Generic.Rep.Eq (genericEq)
 import Data.Generic.Rep.Ord (genericCompare)
-import Data.Newtype (class Newtype, un)
+import Data.Newtype (class Newtype, un, under, over)
 
 
 defaultOptions = G.defaultOptions { unwrapSingleConstructors = true }

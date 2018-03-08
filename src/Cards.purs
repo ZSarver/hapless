@@ -4,7 +4,7 @@ import Batteries
 
 import Content.Cards (Card(..), Hand, dummyCard, CardEffect(..), card)
 import PlayerData (Player(..))
-import Facing (Facing(..))
+import Facing (Facing(..), rotate)
 import Content.Enemies
 import XY (XY(..), fst, snd)
 import Box
@@ -39,12 +39,11 @@ effectCoordinates (Player p) range area = do
     where 
         ploc :: { x :: Int, y :: Int }
         ploc  = un XY p.location
-        effectCenter
-            | p.facing == East = XY {x: ploc.x + range, y: ploc.y}
-            | p.facing == West = XY {x: ploc.x - range, y: ploc.y}
-            | p.facing == North = XY {x: ploc.x, y: ploc.y - range}
-            | p.facing == South = XY {x: ploc.x, y: ploc.y + range}
-            | otherwise = XY {x: ploc.x, y: ploc.y}
+        effectCenter = case p.facing of
+                         East -> XY {x: ploc.x + range, y: ploc.y}
+                         West -> XY {x: ploc.x - range, y: ploc.y}
+                         North -> XY {x: ploc.x, y: ploc.y - range}
+                         South -> XY {x: ploc.x, y: ploc.y + range}
         xoffsets = map fst area
         xcoords = zipWith (+) xoffsets (replicate (length xoffsets) (fst effectCenter))
         yoffsets = map snd area
@@ -76,29 +75,16 @@ handle1CardEffect (Move (XY xy)) (GameState g) = if canMove then moved else (Gam
         | p.facing == West = setLocation (GameState g) (XY {x: (l.x - 1), y: l.y})
         | otherwise = (GameState g)
 
-handle1CardEffect (Rotate i) (GameState g) = GameState g
+handle1CardEffect (Rotate i) (GameState g) = GameState g'
+  where
+    r :: Player -> Player
+    r = over Player $ \p ->p{facing = rotate i p.facing}
+    newplayer = r g.player
+    g' = g{ player = r g.player }
 
-
+handle1CardEffect (AttackMove (XY xy)) (GameState g) = GameState g
 
 
 
 handle1CardEffect _ g = g
 
-handleMoveEffect :: GameState -> Card -> GameState
-handleMoveEffect (GameState g) c = if canMove then moved else (GameState g)
-    where
-        (Player p) = g.player
-        (XY l) = p.location
-        (Box b) = g.boundaries
-        canMove
-            | p.facing == North && l.y == 1 = false
-            | p.facing == South && l.y == b.height-1 = false
-            | p.facing == East && l.x == b.width-1 = false
-            | p.facing == West && l.x == 1 = false
-            | otherwise = true
-        moved
-            | p.facing == North = setLocation (GameState g) (XY {x: l.x, y: (l.y - 1)})
-            | p.facing == South = setLocation (GameState g) (XY {x: l.x, y: (l.y + 1)})
-            | p.facing == East = setLocation (GameState g) (XY {x: (l.x + 1), y: l.y})
-            | p.facing == West = setLocation (GameState g) (XY {x: (l.x - 1), y: l.y})
-            | otherwise = (GameState g)
