@@ -15,20 +15,21 @@ import Geometry
 import Data.Newtype (un)
 import Control.Monad.State (execState, modify)
 import Data.Foldable (sequence_)
+import Debug.Trace (traceAny)
 
-discardN :: Int -> Hand -> Maybe Hand
-discardN n h = if (length h) < n then Nothing else Just (drop n h)
+discardN :: Int -> Hand -> Hand
+discardN n h = if (length h) < n then h else (drop n h)
 
-discard :: Hand -> Maybe Hand
+discard :: Hand -> Hand
 discard = discardN 1
 
-play :: GameState -> Int -> GameState
-play (GameState g) i = if (GameState g) /= g' then handleCardEffect g' (Card c') else (GameState g)
+play :: Int -> GameState -> GameState
+play i (GameState g) = if h'' /= h then handleCardEffect (Card c') g' else (GameState g)
     where 
         h = g.hand
         (Card c') = fromMaybe dummyCard (map card $ h !! i)
         h' = deleteAt i h
-        h'' = fromMaybe h (fromMaybe (pure h) (discardN <$> pure c'.cost <*> h'))
+        h'' = fromMaybe h $ discardN <$> pure c'.cost <*> h'
         g' = GameState (g {hand = h''})
 
 -- origin is the upper left, x increases to the right, y increases down
@@ -50,8 +51,8 @@ effectCoordinates (Player p) range area = do
         yoffsets = map snd area
         ycoords = zipWith (+) yoffsets (replicate (length yoffsets) (snd effectCenter))
 
-handleCardEffect :: GameState -> Card -> GameState
-handleCardEffect g (Card c) = flip execState g $ do
+handleCardEffect :: Card -> GameState -> GameState
+handleCardEffect (Card c) g = flip execState g $ do
   sequence_ $ map (\e -> modify (handle1CardEffect e)) c.effect
 
 handle1CardEffect :: CardEffect -> GameState -> GameState

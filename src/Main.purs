@@ -58,8 +58,10 @@ handleKey (Key key) debug = do
           Nothing -> do
             log "load failed"
             pure Nothing
-      | k == one = do
-        pure $ Just $ (flip play) 1
+      | k >= 49 && k <= 57 = do
+        pure $ Just $ play $ k - 49
+      | k == 0 = do
+        pure $ Just $ play 9
       | otherwise = do
           log (show k)
           pure Nothing
