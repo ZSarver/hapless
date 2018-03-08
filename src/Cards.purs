@@ -2,7 +2,7 @@ module Cards where
 
 import Batteries
 
-import Content.Cards (Card(..), Hand, dummyCard, CardEffect(..), card)
+import Content.Cards (ShortCard, Card(..), Hand, dummyCard, CardEffect(..), card)
 import PlayerData (Player(..))
 import Facing (Facing(..), rotate)
 import Content.Enemies
@@ -17,20 +17,31 @@ import Control.Monad.State (execState, modify)
 import Data.Foldable (sequence_)
 import Debug.Trace (traceAny)
 
+
+
 discardN :: Int -> Hand -> Hand
 discardN n h = if (length h) < n then h else (drop n h)
 
 discard :: Hand -> Hand
 discard = discardN 1
 
+canPlay :: Card -> GameState -> Boolean
+canPlay (Card c) (GameState g) = c.cost < (length g.hand)
+
+removeCard :: Int -> Hand -> Hand
+removeCard i hand = fromMaybe hand $ deleteAt i hand
+
 play :: Int -> GameState -> GameState
-play i (GameState g) = if h'' /= h then handleCardEffect (Card c') g' else (GameState g)
-    where 
-        h = g.hand
-        (Card c') = fromMaybe dummyCard (map card $ h !! i)
-        h' = deleteAt i h
-        h'' = fromMaybe h $ discardN <$> pure c'.cost <*> h'
-        g' = GameState (g {hand = h''})
+play i gs@(GameState g) = case g.hand !! i of
+  Nothing -> gs
+  Just sc -> 
+    let c = card sc in 
+      case canPlay c gs of
+        false -> gs
+        true -> 
+          liftHand (removeCard i) 
+          >>> liftHand (discardN (un Card c).cost) 
+          >>> handleCardEffect c $ gs
 
 -- origin is the upper left, x increases to the right, y increases down
 effectCoordinates :: Player -> Int -> Array XY -> Array XY
@@ -63,12 +74,7 @@ handle1CardEffect (Move xy) gs@(GameState g) = movePlayerTo targetLocation gs
   where
     targetLocation = localToAbsolute (un Player g.player) xy
 
-handle1CardEffect (Rotate i) (GameState g) = GameState g'
-  where
-    r :: Player -> Player
-    r = over Player $ \p ->p{facing = rotate i p.facing}
-    newplayer = r g.player
-    g' = g{ player = r g.player }
+handle1CardEffect (Rotate i) gs = liftPlayer (\(Player p) -> Player p{facing = rotate i p.facing}) gs
 
 handle1CardEffect (AttackMove xy) gs@(GameState g) = 
   case enemyAtLocation targetLocation gs of
@@ -81,8 +87,6 @@ handle1CardEffect (AttackMove xy) gs@(GameState g) =
 
 handle1CardEffect _ g = g
 
-
-
 enemyAtLocation :: XY -> GameState -> Maybe Enemy
 enemyAtLocation l (GameState g) = head $ filter (\(Enemy e) -> e.location == l) g.enemies
 
@@ -94,8 +98,4 @@ movePlayerTo xy@(XY l) (GameState g) = GameState g{ player = p' }
     legal = (b.xmin <= l.x) && (b.xmax >= l.x) && (b.ymin <= l.y) && (b.ymax >= l.y)
 
 removeEnemyAtLocation :: XY -> GameState -> GameState
-removeEnemyAtLocation xy (GameState g) = GameState g{ enemies = filter (\(Enemy e) -> e.location /= xy) g.enemies }
-
-
-
-
+removeEnemyAtLocation xy = liftEnemies $ filter (\(Enemy e) -> e.location /= xy)

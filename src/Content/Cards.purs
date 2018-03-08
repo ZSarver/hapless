@@ -19,7 +19,7 @@ card c = case c of
   _ -> dummyAttack
 
 forward :: XY
-forward = XY { x:1, y:0 }
+forward = XY { x:0, y:1 }
 
 data CardEffect 
   = Attack { range :: Int, area :: Array XY }

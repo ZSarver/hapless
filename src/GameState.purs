@@ -24,6 +24,15 @@ newtype GameState = GameState
   , boundaries :: Box
   }
 
+liftHand :: (Hand -> Hand) -> GameState -> GameState
+liftHand f (GameState g) = GameState g{ hand = f g.hand }
+
+liftPlayer :: (Player -> Player) -> GameState -> GameState
+liftPlayer f (GameState g) = GameState g{ player = f g.player }
+
+liftEnemies :: (Array Enemy -> Array Enemy) -> GameState -> GameState
+liftEnemies f (GameState g) = GameState g{ enemies = f g.enemies }
+
 derive instance genericGameState :: Generic GameState _
 instance showGameState :: Show GameState where 
   show = genericShow 
