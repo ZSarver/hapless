@@ -11,6 +11,7 @@ import Box
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Array(length, drop, (!!), deleteAt, filter, notElem, elem, zipWith, replicate)
 import GameState
+import Geometry
 import Data.Newtype (un)
 import Control.Monad.State (execState, modify)
 import Data.Foldable (sequence_)
@@ -57,23 +58,9 @@ handle1CardEffect :: CardEffect -> GameState -> GameState
 handle1CardEffect (Attack a) (GameState g) = GameState $ g { enemies = filter enemyFilter g.enemies }
     where enemyFilter (Enemy e) = e.location `notElem` (effectCoordinates g.player a.range a.area)
 
-handle1CardEffect (Move (XY xy)) (GameState g) = if canMove then moved else (GameState g)
+handle1CardEffect (Move xy) gs@(GameState g) = movePlayerTo targetLocation gs
   where
-    (Player p) = g.player
-    (XY l) = p.location
-    (Box b) = g.boundaries
-    canMove
-        | p.facing == North && l.y == 1 = false
-        | p.facing == South && l.y == b.height-1 = false
-        | p.facing == East && l.x == b.width-1 = false
-        | p.facing == West && l.x == 1 = false
-        | otherwise = true
-    moved
-        | p.facing == North = setLocation (GameState g) (XY {x: l.x, y: (l.y - 1)})
-        | p.facing == South = setLocation (GameState g) (XY {x: l.x, y: (l.y + 1)})
-        | p.facing == East = setLocation (GameState g) (XY {x: (l.x + 1), y: l.y})
-        | p.facing == West = setLocation (GameState g) (XY {x: (l.x - 1), y: l.y})
-        | otherwise = (GameState g)
+    targetLocation = localToAbsolute (un Player g.player) xy
 
 handle1CardEffect (Rotate i) (GameState g) = GameState g'
   where
@@ -82,9 +69,32 @@ handle1CardEffect (Rotate i) (GameState g) = GameState g'
     newplayer = r g.player
     g' = g{ player = r g.player }
 
-handle1CardEffect (AttackMove (XY xy)) (GameState g) = GameState g
-
+handle1CardEffect (AttackMove xy) gs@(GameState g) = 
+  case enemyAtLocation targetLocation gs of
+    Nothing -> movePlayerTo targetLocation gs
+    Just _ -> removeEnemyAtLocation targetLocation gs
+  where 
+    player = un Player g.player
+    targetLocation = localToAbsolute player xy
 
 
 handle1CardEffect _ g = g
+
+
+
+enemyAtLocation :: XY -> GameState -> Maybe Enemy
+enemyAtLocation l (GameState g) = head $ filter (\(Enemy e) -> e.location == l) g.enemies
+
+movePlayerTo :: XY -> GameState -> GameState
+movePlayerTo xy@(XY l) (GameState g) = GameState g{ player = p' }
+  where
+    p' = over Player ( _{ location = xy } ) g.player
+    (Box b) = g.boundaries
+    legal = (b.xmin <= l.x) && (b.xmax >= l.x) && (b.ymin <= l.y) && (b.ymax >= l.y)
+
+removeEnemyAtLocation :: XY -> GameState -> GameState
+removeEnemyAtLocation xy (GameState g) = GameState g{ enemies = filter (\(Enemy e) -> e.location /= xy) g.enemies }
+
+
+
 

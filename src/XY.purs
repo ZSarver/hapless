@@ -15,6 +15,9 @@ instance encodeXY :: Encode XY where encode = genericEncode defaultOptions
 instance decodeXY :: Decode XY where decode = genericDecode defaultOptions
 instance eqXY :: Eq XY where eq = genericEq
 
+instance semigroupXY :: Semigroup XY where
+  append (XY xy) (XY ab) = XY { x: xy.x + ab.x, y: xy.y + ab.y }
+
 fst :: XY -> Int
 fst (XY c) = c.x
 

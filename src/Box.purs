@@ -2,7 +2,12 @@ module Box where
 
 import Batteries
 
-newtype Box = Box { width :: Int, height :: Int }
+newtype Box = Box 
+  { xmin :: Int
+  , xmax :: Int 
+  , ymin :: Int
+  , ymax :: Int
+  }
 
 derive instance newtypeBox :: Newtype Box _
 derive instance genericBox :: Generic Box _

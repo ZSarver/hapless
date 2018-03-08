@@ -11,38 +11,29 @@ import Batteries
 import Facing
 import XY
 
-wrap z = { location : XY z}
 
-facingAbsoluteToLocal :: Facing -> { location :: XY } -> { location :: XY }
-facingAbsoluteToLocal f p = case f of
-  South -> wrap xy
-  North -> wrap { x: -xy.x, y: -xy.y }
-  East  -> wrap { x:  xy.y, y: -xy.x }
-  West  -> wrap { x: -xy.y, y:  xy.x }
-  where
-    XY xy = p.location
+facingAbsoluteToLocal :: Facing -> XY -> XY
+facingAbsoluteToLocal f (XY xy) = case f of
+  South -> XY xy
+  North -> XY { x: -xy.x, y: -xy.y }
+  East  -> XY { x:  xy.y, y: -xy.x }
+  West  -> XY { x: -xy.y, y:  xy.x }
 
-facingLocalToAbsolute :: Facing -> { location :: XY } -> { location :: XY }
-facingLocalToAbsolute f p = case f of
-  South -> wrap xy
-  North -> wrap { x: -xy.x, y: -xy.y }
-  East  -> wrap { x: -xy.y, y:  xy.x }
-  West  -> wrap { x:  xy.y, y: -xy.x }
-  where
-    XY xy = p.location
+facingLocalToAbsolute :: Facing -> XY -> XY
+facingLocalToAbsolute f (XY xy) = case f of
+  South -> XY xy
+  North -> XY { x: -xy.x, y: -xy.y }
+  East  -> XY { x: -xy.y, y:  xy.x }
+  West  -> XY { x:  xy.y, y: -xy.x }
 
-posAbsoluteToLocal :: XY -> { location :: XY } -> { location :: XY }
-posAbsoluteToLocal (XY origin) p = wrap {x: xy.x - origin.x, y: xy.y - origin.y}
-  where
-    XY xy = p.location
+posAbsoluteToLocal :: XY -> XY -> XY
+posAbsoluteToLocal (XY origin) (XY xy) = XY {x: xy.x - origin.x, y: xy.y - origin.y}
 
-posLocalToAbsolute :: XY -> { location :: XY } -> { location :: XY }
-posLocalToAbsolute (XY origin) p = wrap {x: xy.x + origin.x, y: xy.y + origin.y}
-  where
-    XY xy = p.location
+posLocalToAbsolute :: XY -> XY -> XY
+posLocalToAbsolute (XY origin) (XY xy) = XY {x: xy.x + origin.x, y: xy.y + origin.y}
 
-absoluteToLocal :: { facing :: Facing, location :: XY } -> { location :: XY } -> { location :: XY }
+absoluteToLocal :: forall f. { facing :: Facing, location :: XY | f } -> XY -> XY
 absoluteToLocal x = facingAbsoluteToLocal x.facing <<< posAbsoluteToLocal x.location
 
-localToAbsolute :: { facing :: Facing, location :: XY } -> { location :: XY } -> { location :: XY }
+localToAbsolute :: forall f. { facing :: Facing, location :: XY | f } -> XY -> XY
 localToAbsolute x = posLocalToAbsolute x.location <<< facingLocalToAbsolute x.facing

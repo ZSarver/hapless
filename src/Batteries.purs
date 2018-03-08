@@ -7,6 +7,8 @@ module Batteries
   , module Data.Foreign.Class
   , module Data.Foreign.Generic
   , module Data.Newtype
+  , module Data.Foldable
+  , module Data.Array
   , defaultOptions
   ) where
 
@@ -19,6 +21,8 @@ import Data.Foreign.Generic as G
 import Data.Generic.Rep.Eq (genericEq)
 import Data.Generic.Rep.Ord (genericCompare)
 import Data.Newtype (class Newtype, un, under, over)
+import Data.Foldable
+import Data.Array (head)
 
 
 defaultOptions = G.defaultOptions { unwrapSingleConstructors = true }
