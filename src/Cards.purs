@@ -22,7 +22,7 @@ discard :: Hand -> Maybe Hand
 discard = discardN 1
 
 play :: GameState -> Int -> GameState
-play (GameState g) i = if (GameState g) /= g' then handleCardEffect g' (Card c') else (GameState g)
+play (GameState g) i = if (GameState g) /= g' then handleCardEffect (Card c') g' else (GameState g)
     where 
         h = g.hand
         (Card c') = fromMaybe dummyCard (map card $ h !! i)
@@ -49,8 +49,8 @@ effectCoordinates (Player p) range area = do
         yoffsets = map snd area
         ycoords = zipWith (+) yoffsets (replicate (length yoffsets) (snd effectCenter))
 
-handleCardEffect :: GameState -> Card -> GameState
-handleCardEffect g (Card c) = flip execState g $ do
+handleCardEffect :: Card -> GameState -> GameState
+handleCardEffect (Card c) g = flip execState g $ do
   sequence_ $ map (\e -> modify (handle1CardEffect e)) c.effect
 
 handle1CardEffect :: CardEffect -> GameState -> GameState
