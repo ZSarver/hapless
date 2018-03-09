@@ -65,7 +65,7 @@ move Steadfast (XY xy)
 -- Always tries to reduce the greater of horizontal or vertical distance
 -- turns slowly
 move Waffly target@(XY xy) 
-  | xy.y > (abs xy.x) = pure $ turnToward target
+  | xy.y < (abs xy.x) = pure $ turnToward target
   | xy.y > 0          = pure Forward
   | otherwise         = pure $ turnToward target
 

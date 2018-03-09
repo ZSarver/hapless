@@ -18,7 +18,8 @@
     "purescript-foldable-traversable": "^3.7.1",
     "purescript-foreign-generic": "^5.0.1",
     "purescript-lens": "latest",
-    "purescript-debug": "^3.0.0"
+    "purescript-debug": "^3.0.0",
+    "purescript-variant": "^4.1.0"
   },
   "devDependencies": {
     "purescript-psci-support": "^3.0.0"

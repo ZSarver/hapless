@@ -11,6 +11,7 @@ module Batteries
   , module Data.Array
   , module Data.Maybe
   , module Data.Tuple
+  , module Data.Variant
   , defaultOptions
   ) where
 
@@ -26,6 +27,7 @@ import Data.Newtype (class Newtype, un, under, over)
 import Data.Foldable
 import Data.Maybe
 import Data.Tuple
+import Data.Variant (Variant(..), inj, SProxy(..))
 import Data.Array (head)
 
 

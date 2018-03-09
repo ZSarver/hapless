@@ -4,7 +4,7 @@ import Batteries
 
 import Box
 import PlayerData (Player(..), dummyPlayer)
-import Content.Enemies (Enemy, dummyEnemy)
+import Content.Enemies (Enemy(..), dummyEnemy)
 import Bestiary
 import Content.Cards (Hand, ShortCard (..))
 import Data.Maybe
@@ -46,6 +46,15 @@ deserialize :: String -> Maybe GameState
 deserialize s = case un Identity (runExceptT (genericDecodeJSON defaultOptions s)) of
   Right x -> Just x
   Left _ -> Nothing
+
+at :: GameState -> XY -> Variant (player :: Player, enemy :: Enemy, empty :: Unit)
+at (GameState g) xy = 
+  if (un Player g.player).location == xy 
+    then inj (SProxy :: SProxy "player") g.player
+    else 
+    case find (\(Enemy e) -> e.location == xy) g.enemies of
+      (Just e) -> inj (SProxy :: SProxy "enemy") e
+      Nothing -> inj (SProxy :: SProxy "empty") unit
 
 setLocation :: GameState -> XY -> GameState
 setLocation (GameState g) l = GameState g'
