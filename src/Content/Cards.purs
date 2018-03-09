@@ -2,7 +2,7 @@ module Content.Cards where
 
 import Batteries
 
-import XY (XY(..), dummyCoordinate, rectangle)
+import XY (XY(..), dummyCoordinate, rectangle, forward)
 
 data ShortCard 
   = FireBomb 
@@ -18,8 +18,6 @@ card c = case c of
   TurnRight -> Card { effect: [Rotate 3], cost: 2 }
   _ -> dummyAttack
 
-forward :: XY
-forward = XY { x:0, y:1 }
 
 data CardEffect 
   = Attack { range :: Int, area :: Array XY }

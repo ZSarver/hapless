@@ -15,7 +15,7 @@ instance decodeSpecies :: Decode Species where decode = genericDecode defaultOpt
 instance eqSpecies :: Eq Species where eq = genericEq
 instance ordSpecies :: Ord Species where compare = genericCompare
 
-data MoveBehavior = Whatever
+data MoveBehavior = Righty | Steadfast | Waffly
 
 derive instance genericMoveBehavior :: Generic MoveBehavior _
 instance showMoveBehavior :: Show MoveBehavior where show = genericShow

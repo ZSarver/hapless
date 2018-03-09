@@ -18,6 +18,18 @@ instance eqXY :: Eq XY where eq = genericEq
 instance semigroupXY :: Semigroup XY where
   append (XY xy) (XY ab) = XY { x: xy.x + ab.x, y: xy.y + ab.y }
 
+forward :: XY
+forward = XY { x: 0, y: 1 }
+
+back :: XY
+back = XY { x:0, y: -1 }
+
+left :: XY
+left = XY { x: 1, y: 0 }
+
+right :: XY
+right = XY { x: -1, y: 0 }
+
 fst :: XY -> Int
 fst (XY c) = c.x
 

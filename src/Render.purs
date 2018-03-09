@@ -63,7 +63,7 @@ renderCards cards = liftEff do
   sequence_ $ map clearCardText (1..10)
   sequence_ $ map render1card $ zip cards (1..10)
   where
-    render1card (Tuple c i) = putCardText i (show c)
+    render1card (Tuple c i) = putCardText i (show i <> ". " <> show c)
 
 renderEnemy :: forall e. Enemy -> RotInstance -> Aff (rot :: ROT | e) Unit
 renderEnemy (Enemy e) rotjs = putTile2 img T.floor loc.x loc.y rotjs

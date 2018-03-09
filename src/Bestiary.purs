@@ -27,9 +27,9 @@ instance eqBesiary :: Eq Bestiary where eq x y = (toRs x) == (toRs y)
 
 dummyBestiary :: Bestiary
 dummyBestiary = fromRs 
-  [ R Skeleton Rend Whatever
-  , R Ghost Befuddle Whatever
-  , R Slime Smash Whatever 
+  [ R Skeleton Rend Steadfast
+  , R Ghost Befuddle Waffly
+  , R Slime Smash Righty
   ]
 
 

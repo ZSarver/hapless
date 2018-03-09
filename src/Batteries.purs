@@ -9,6 +9,8 @@ module Batteries
   , module Data.Newtype
   , module Data.Foldable
   , module Data.Array
+  , module Data.Maybe
+  , module Data.Tuple
   , defaultOptions
   ) where
 
@@ -22,6 +24,8 @@ import Data.Generic.Rep.Eq (genericEq)
 import Data.Generic.Rep.Ord (genericCompare)
 import Data.Newtype (class Newtype, un, under, over)
 import Data.Foldable
+import Data.Maybe
+import Data.Tuple
 import Data.Array (head)
 
 
