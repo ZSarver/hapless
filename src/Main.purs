@@ -2,6 +2,8 @@ module Main where
 
 import Batteries
 
+import Core
+
 import Control.Monad.Aff.Console(CONSOLE, log)
 import Control.Monad.Eff (Eff)
 import FFI.Rot (DisplayOptions(..), Key(..), ROT, getKey, initrotjs)
@@ -10,13 +12,10 @@ import Control.Monad.Aff(Aff, launchAff_)
 import Control.Monad.Rec.Class(forever)
 import Control.Monad.Eff.Class (liftEff)
 import Content.Tiles (tileSet, tileMap)
-import Render (render)
-import GameState (GameState(..), dummyGameState, serialize, deserialize)
-import Data.Maybe (Maybe(..), fromMaybe)
 import Control.Monad.State.Trans (get, modify, runStateT)
 import Control.Monad.Aff.Class (liftAff)
 import Data.Array((!!))
-import Cards(play, handleCardEffect)
+import Engine.Cards(play, handleCardEffect)
 import Content.Cards(card, ShortCard(..))
 
 main :: forall e. Eff ( console :: CONSOLE, rot :: ROT, dom :: DOM | e) Unit

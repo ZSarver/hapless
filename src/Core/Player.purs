@@ -1,9 +1,9 @@
-module PlayerData where
+module Core.Player where
 
 import Batteries
 import Content.Cards (Hand(..), ShortCard(..))
-import Facing
-import XY
+import Content.Facing
+import Content.XY
 newtype Player = Player
     { location :: XY
     , facing :: Facing

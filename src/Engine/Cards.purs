@@ -1,18 +1,12 @@
-module Cards where
+module Engine.Cards where
 
 import Batteries
 
 import Content.Cards (ShortCard, Card(..), Hand, dummyCard, CardEffect(..), card)
-import PlayerData (Player(..))
-import Facing (Facing(..), rotate)
+import Core
 import Content.Enemies
-import XY (XY(..), fst, snd)
-import Box
-import Data.Maybe (Maybe(..), fromMaybe)
+
 import Data.Array(length, drop, (!!), deleteAt, filter, notElem, elem, zipWith, replicate)
-import GameState
-import Geometry
-import Data.Newtype (un)
 import Control.Monad.State (execState, modify)
 import Data.Foldable (sequence_)
 import Debug.Trace (traceAny)
@@ -57,10 +51,10 @@ effectCoordinates (Player p) range area = do
                          West -> XY {x: ploc.x - range, y: ploc.y}
                          North -> XY {x: ploc.x, y: ploc.y - range}
                          South -> XY {x: ploc.x, y: ploc.y + range}
-        xoffsets = map fst area
-        xcoords = zipWith (+) xoffsets (replicate (length xoffsets) (fst effectCenter))
-        yoffsets = map snd area
-        ycoords = zipWith (+) yoffsets (replicate (length yoffsets) (snd effectCenter))
+        xoffsets = map x area
+        xcoords = zipWith (+) xoffsets (replicate (length xoffsets) (x effectCenter))
+        yoffsets = map y area
+        ycoords = zipWith (+) yoffsets (replicate (length yoffsets) (y effectCenter))
 
 handleCardEffect :: Card -> GameState -> GameState
 handleCardEffect (Card c) g = flip execState g $ do

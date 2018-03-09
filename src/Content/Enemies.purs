@@ -2,8 +2,8 @@ module Content.Enemies where
 
 import Batteries 
 
-import Facing
-import XY
+import Content.Facing
+import Content.XY
 import Data.Generic.Rep.Ord (genericCompare)
 
 data Species = Skeleton | Ghost | Slime

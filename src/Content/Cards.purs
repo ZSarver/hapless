@@ -2,7 +2,7 @@ module Content.Cards where
 
 import Batteries
 
-import XY (XY(..), dummyCoordinate, rectangle, forward)
+import Content.XY (XY(..), dummyCoordinate, rectangle, forward)
 
 data ShortCard 
   = FireBomb 

@@ -1,4 +1,4 @@
-module Geometry
+module Core.Geometry
  ( facingAbsoluteToLocal
  , facingLocalToAbsolute 
  , posAbsoluteToLocal
@@ -8,8 +8,8 @@ module Geometry
  ) where
 
 import Batteries
-import Facing
-import XY
+import Content.Facing
+import Content.XY
 import Debug.Trace
 
 

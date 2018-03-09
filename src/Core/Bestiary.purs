@@ -1,4 +1,4 @@
-module Bestiary where
+module Core.Bestiary where
   
 import Batteries
 

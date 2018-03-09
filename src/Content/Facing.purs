@@ -1,4 +1,4 @@
-module Facing where
+module Content.Facing where
 
 import Prelude
 import Prelude (class Show)
@@ -22,11 +22,11 @@ rotate n f = fromInt $ ((toInt f) + n) `mod` 4
     fromInt 2 = North
     fromInt _ = East
 
-left :: Facing -> Facing
-left = rotate 1
+rotLeft :: Facing -> Facing
+rotLeft = rotate 1
 
-right :: Facing -> Facing
-right = rotate 3
+rotRight :: Facing -> Facing
+rotRight = rotate 3
 
 derive instance genericFacing :: Generic Facing _
 instance showFacing :: Show Facing where show = genericShow

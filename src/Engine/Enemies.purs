@@ -1,14 +1,12 @@
 module Engine.Enemies where
 
 import Batteries
-import XY
+
 import Content.Enemies (Enemy(..), MoveBehavior(..), AttackBehavior(..))
-import PlayerData
+import Core
+
 import Data.Ord
-import Geometry
-import Bestiary
 import Data.Map (lookup)
-import GameState
 import Partial
 
 data Action

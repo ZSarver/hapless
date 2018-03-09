@@ -1,4 +1,4 @@
-module Box where
+module Core.Box where
 
 import Batteries
 

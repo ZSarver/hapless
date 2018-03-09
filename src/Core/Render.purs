@@ -1,15 +1,14 @@
-module Render where
+module Core.Render where
 
 import Batteries
 
-import Data.Tuple (Tuple(..))
-import GameState (GameState(..))
-import PlayerData (Player(..))
+import Core.GameState (GameState(..))
+import Core.Player(Player(..))
 import Content.Enemies (Enemy(..), Species(..))
 import Content.Cards (ShortCard)
 import Content.Tiles as T
-import Facing (Facing(..))
-import XY (XY(..))
+import Content.Facing (Facing(..))
+import Content.XY (XY(..))
 import FFI.Rot (ROT, RotInstance, clear, putTile, putTile2)
 import FFI.DOM (clearCardText, putCardText, DOM)
 import Control.Monad.Aff (Aff)

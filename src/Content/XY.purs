@@ -1,4 +1,4 @@
-module XY where
+module Content.XY where
 
 import Batteries
 
@@ -30,11 +30,11 @@ left = XY { x: 1, y: 0 }
 right :: XY
 right = XY { x: -1, y: 0 }
 
-fst :: XY -> Int
-fst (XY c) = c.x
+x :: XY -> Int
+x (XY c) = c.x
 
-snd :: XY -> Int
-snd (XY c) = c.y
+y :: XY -> Int
+y (XY c) = c.y
 
 rectangle :: Int -> Int -> Array XY
 rectangle = rectangleAt $ XY {x: 0, y: 0}

@@ -1,18 +1,18 @@
-module GameState where
+module Core.GameState where
 
 import Batteries
 
-import Box
-import PlayerData (Player(..), dummyPlayer)
+import Core.Box
+import Core.Player (Player(..), dummyPlayer)
 import Content.Enemies (Enemy(..), dummyEnemy)
-import Bestiary
+import Core.Bestiary
 import Content.Cards (Hand, ShortCard (..))
 import Data.Maybe
 import Data.Identity
 import Control.Monad.Except.Trans
 import Optic.Lens
 import Optic.Types
-import XY
+import Content.XY
 import Data.Either
 
 
