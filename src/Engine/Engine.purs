@@ -9,8 +9,9 @@ import Control.Monad.State
 import Core.GameState
 import Control.Monad.Writer.Class
 import Control.Monad.Rec.Class
+import Control.Monad.Eff.Random
 
-newtype Engine e a = Engine (StateT GameState (Aff (dom :: DOM | e)) a)
+newtype Engine e a = Engine (StateT GameState (Aff (dom :: DOM, random :: RANDOM | e)) a)
 
 -- (dom :: DOM | e)
 derive instance newtypeEngine :: Newtype (Engine e a) _
@@ -38,9 +39,9 @@ instance monadTellEngine :: MonadTell String (Engine e) where
 instance monadRecEngine :: MonadRec (Engine e) where
   tailRecM f a = Engine $ tailRecM (f >>> un Engine) a
 
-instance monadEffEngine :: MonadEff (dom :: DOM | e) (Engine e) where
+instance monadEffEngine :: MonadEff (dom :: DOM, random :: RANDOM | e) (Engine e) where
   liftEff eff = Engine $ liftEff eff
 
-instance monadAffEngine :: MonadAff (dom :: DOM | e) (Engine e) where
+instance monadAffEngine :: MonadAff (dom :: DOM, random :: RANDOM | e) (Engine e) where
   liftAff aff = Engine $ liftAff aff
 

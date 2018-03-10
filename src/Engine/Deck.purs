@@ -4,6 +4,7 @@ import Batteries
 import Data.Array(updateAt, reverse, range, (..), zipWith, take, drop)
 import Control.Bind (join)
 import Control.Monad.Eff (Eff)
+import Control.Monad.Eff.Class (liftEff)
 import Control.Monad.Eff.Random
 import Data.Traversable (sequence)
 import Data.Array.Shuffle
@@ -12,6 +13,7 @@ import Data.Tuple(Tuple(..))
 import Core.Deck
 import Core.GameState
 import Content.Cards
+import Engine.Engine
 
 shuffleDeck :: forall e. Deck -> Eff (random :: RANDOM | e) Deck
 shuffleDeck d = do
@@ -25,14 +27,15 @@ defaultDrawSize :: Int
 defaultDrawSize = 10
 
 -- draws up to max hand size
-draw :: forall e. Int -> GameState -> Eff (random :: RANDOM | e) GameState
-draw n (GameState g) = do
-  deck <- mightShuffle
-  let hand = take canDraw $ drawPile deck
-  let deck' = Deck (drop canDraw $ drawPile deck) (discardPile deck)
-  pure $ GameState g
+draw :: forall e. Int -> Engine e Unit
+draw n = do
+  (GameState g) <- get
+  deck <- mightShuffle g
+  let hand' = take (canDraw g) $ drawPile deck
+  let deck' = Deck (drop (canDraw g) $ drawPile deck) (discardPile deck)
+  put $ GameState (g {hand = hand', deck = deck'})
   where
-    canDraw = min (maxHandSize - (length g.hand)) defaultDrawSize
-    mightShuffle
-      | canDraw > (length (drawPile g.deck)) = shuffleDeck g.deck
+    canDraw g = min (maxHandSize - (length g.hand)) defaultDrawSize
+    mightShuffle g
+      | (canDraw g) > (length (drawPile g.deck)) = liftEff $ shuffleDeck g.deck
       | otherwise = pure g.deck

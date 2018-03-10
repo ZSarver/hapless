@@ -23,7 +23,7 @@ import Partial.Unsafe (unsafePartial)
 import Engine.Enemies (advanceEnemies)
 import Engine.Engine
 
-main :: forall e. Eff ( console :: CONSOLE, rot :: ROT, dom :: DOM | e) Unit
+main :: forall e. Eff ( console :: CONSOLE, rot :: ROT, dom :: DOM, random :: RANDOM | e) Unit
 main = launchAff_ $ do
   liftEff $ combatLog "Hello!"
   let opts = DisplayOptions { width: 8
@@ -44,7 +44,7 @@ main = launchAff_ $ do
       Nothing -> pure unit
       Just e -> e
 
-execEngine :: forall e a. Engine e a -> GameState -> Aff (dom :: DOM | e) a
+execEngine :: forall e a. Engine e a -> GameState -> Aff (dom :: DOM, random :: RANDOM | e) a
 execEngine (Engine e) gs = evalStateT e gs
  
 
@@ -60,7 +60,7 @@ withEngineResponse action = do
 pass :: forall e. Engine e Unit
 pass = withEngineResponse $ \gs -> Tuple true gs
 
-handleKey :: forall e. Key -> DebugBox -> Aff (console :: CONSOLE, dom :: DOM | e) (Maybe (Engine (console :: CONSOLE | e) Unit))
+handleKey :: forall e. Key -> DebugBox -> Aff (console :: CONSOLE, dom :: DOM, random :: RANDOM | e) (Maybe (Engine (console :: CONSOLE | e) Unit))
 handleKey (Key key) debug = do
   action
   where
