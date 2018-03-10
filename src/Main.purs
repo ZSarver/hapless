@@ -3,9 +3,11 @@ module Main where
 import Batteries
 
 import Core
+import Engine.Deck
 
 import Control.Monad.Aff.Console(CONSOLE, log)
 import Control.Monad.Eff (Eff)
+import Control.Monad.Eff.Random
 import FFI.Rot (DisplayOptions(..), Key(..), ROT, getKey, initrotjs)
 import FFI.DOM (DOM, DebugBox, debugBox, fromDebug)
 import Control.Monad.Aff(Aff, launchAff_)
@@ -44,7 +46,7 @@ main = launchAff_ $ do
 logKey :: forall e. Key -> Aff (console :: CONSOLE | e) Unit
 logKey (Key k) = log (show (k.keyCode))
 
-withEngineResponse :: (GameState -> Tuple Boolean GameState) -> GameState -> GameState
+withEngineResponse :: forall e. (GameState -> Tuple Boolean GameState) -> GameState -> GameState
 withEngineResponse action gs = let (Tuple turnConsumed gs') = action gs in
   if turnConsumed 
      then unsafePartial $ advanceEnemies gs'
