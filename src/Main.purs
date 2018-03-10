@@ -19,6 +19,7 @@ import Engine.Cards(play, handleCardEffect)
 import Content.Cards(card, ShortCard(..))
 import Partial.Unsafe (unsafePartial)
 import Engine.Enemies (advanceEnemies)
+import Engine.Engine
 
 main :: forall e. Eff ( console :: CONSOLE, rot :: ROT, dom :: DOM | e) Unit
 main = launchAff_ $ do
@@ -31,7 +32,7 @@ main = launchAff_ $ do
                             }
   rotjs <- initrotjs opts
   debug <- liftEff debugBox
-  flip runStateT dummyGameState $ forever $ do
+  flip execEngine dummyGameState $ forever $ do
     gameState <- get
     liftAff $ render gameState rotjs
     liftAff $ log (serialize gameState)
@@ -39,21 +40,25 @@ main = launchAff_ $ do
     action <- liftAff $ handleKey key debug
     case action of
       Nothing -> pure unit
-      Just f -> modify f
+      Just e -> e
+
+execEngine :: forall e a. Engine e a -> GameState -> Aff (dom :: DOM | e) a
+execEngine (Engine e) gs = evalStateT e gs
+ 
 
 logKey :: forall e. Key -> Aff (console :: CONSOLE | e) Unit
 logKey (Key k) = log (show (k.keyCode))
 
-withEngineResponse :: (GameState -> Tuple Boolean GameState) -> GameState -> GameState
-withEngineResponse action gs = let (Tuple turnConsumed gs') = action gs in
-  if turnConsumed 
-     then unsafePartial $ advanceEnemies gs'
-     else gs'
+withEngineResponse :: forall e. (GameState -> Tuple Boolean GameState) -> Engine e Unit
+withEngineResponse action = do
+  turnConsumed <- state action
+  when turnConsumed $ unsafePartial $ modify advanceEnemies
 
-pass :: GameState -> GameState
+
+pass :: forall e. Engine e Unit
 pass = withEngineResponse $ \gs -> Tuple true gs
 
-handleKey :: forall e. Key -> DebugBox -> Aff (console :: CONSOLE, dom :: DOM | e) (Maybe (GameState -> GameState))
+handleKey :: forall e. Key -> DebugBox -> Aff (console :: CONSOLE, dom :: DOM | e) (Maybe (Engine (console :: CONSOLE | e) Unit))
 handleKey (Key key) debug = do
   action
   where
@@ -64,7 +69,7 @@ handleKey (Key key) debug = do
         gs <- liftEff $ map deserialize $ fromDebug debug
         log "loading"
         case gs of 
-          Just state -> pure (Just (\x -> state))
+          Just state -> pure (Just (put state))
           Nothing -> do
             log "load failed"
             pure Nothing
