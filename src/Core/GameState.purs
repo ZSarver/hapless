@@ -14,6 +14,7 @@ import Optic.Lens
 import Optic.Types
 import Content.XY
 import Data.Either
+import Core.Deck
 
 
 newtype GameState = GameState
@@ -23,6 +24,7 @@ newtype GameState = GameState
   , enemies :: Array Enemy
   , bestiary :: Bestiary
   , boundaries :: Box
+  , deck :: Deck
   }
 
 liftHp :: (Int -> Int) -> GameState -> GameState
@@ -83,4 +85,5 @@ dummyGameState = GameState
   , enemies: [dummyEnemy]
   , bestiary: dummyBestiary 
   , boundaries: Box {xmin: 1, xmax: 6, ymin: 1, ymax: 6}
+  , deck: Deck [FireBomb, Advance, FireBomb] ([] :: Array ShortCard)
   }
