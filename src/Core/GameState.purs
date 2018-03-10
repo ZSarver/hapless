@@ -19,10 +19,14 @@ import Data.Either
 newtype GameState = GameState
   { player :: Player
   , hand :: Hand
+  , hp :: Int
   , enemies :: Array Enemy
   , bestiary :: Bestiary
   , boundaries :: Box
   }
+
+liftHp :: (Int -> Int) -> GameState -> GameState
+liftHp f (GameState g) = GameState g{ hp = f g.hp }
 
 liftHand :: (Hand -> Hand) -> GameState -> GameState
 liftHand f (GameState g) = GameState g{ hand = f g.hand }
@@ -52,9 +56,9 @@ at (GameState g) xy =
   if (un Player g.player).location == xy 
     then inj (SProxy :: SProxy "player") g.player
     else 
-    case find (\(Enemy e) -> e.location == xy) g.enemies of
-      (Just e) -> inj (SProxy :: SProxy "enemy") e
-      Nothing -> inj (SProxy :: SProxy "empty") unit
+      case find (\(Enemy e) -> e.location == xy) g.enemies of
+        (Just e) -> inj (SProxy :: SProxy "enemy") e
+        Nothing -> inj (SProxy :: SProxy "empty") unit
 
 setLocation :: GameState -> XY -> GameState
 setLocation (GameState g) l = GameState g'
@@ -75,6 +79,7 @@ dummyGameState :: GameState
 dummyGameState = GameState 
   { player: dummyPlayer
   , hand: [FireBomb, Advance, TurnLeft, Advance, TurnRight, Advance, Advance, Advance, Advance, Advance]
+  , hp: 10
   , enemies: [dummyEnemy]
   , bestiary: dummyBestiary 
   , boundaries: Box {xmin: 1, xmax: 6, ymin: 1, ymax: 6}

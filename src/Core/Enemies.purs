@@ -14,6 +14,7 @@ data Action
   = Forward
   | Left
   | Right
+  | Strike
   | Pass
 
 
@@ -27,7 +28,8 @@ turnToward (XY xy)
 -- turns quickly
 -- confused if player is directly behind
 move :: MoveBehavior -> XY -> Array Action
-move Steadfast (XY xy) 
+move Steadfast target@(XY xy) 
+  | target == forward = [Strike]
   | xy.y > 0  = [Forward]
   | xy.x > 0  = [Left, Forward]
   | xy.x < 0  = [Right, Forward]
@@ -36,13 +38,15 @@ move Steadfast (XY xy)
 -- Always tries to reduce the greater of horizontal or vertical distance
 -- turns slowly
 move Waffly target@(XY xy) 
+  | target == forward = [Strike]
   | xy.y < (abs xy.x) = [turnToward target]
   | xy.y > 0          = [Forward]
   | otherwise         = [turnToward target]
 
 -- Does not turn left
 -- turns quickly
-move Righty (XY xy)
+move Righty target@(XY xy)
+  | target == forward = [Strike]
   | xy.y > 0  = [Forward]
   | xy.x < 0  = [Right, Forward]
   | otherwise = [Right, Right]
