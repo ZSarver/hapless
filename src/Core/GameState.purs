@@ -74,7 +74,7 @@ locationLens = lens (getLocation) (setLocation)
 dummyGameState :: GameState
 dummyGameState = GameState 
   { player: dummyPlayer
-  , hand: [FireBomb, Advance, FireBomb, Advance, FireBomb]
+  , hand: [FireBomb, Advance, TurnLeft, Advance, TurnRight, Advance, Advance, Advance, Advance, Advance]
   , enemies: [dummyEnemy]
   , bestiary: dummyBestiary 
   , boundaries: Box {xmin: 1, xmax: 6, ymin: 1, ymax: 6}

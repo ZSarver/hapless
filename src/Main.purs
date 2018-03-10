@@ -45,7 +45,7 @@ logKey :: forall e. Key -> Aff (console :: CONSOLE | e) Unit
 logKey (Key k) = log (show (k.keyCode))
 
 withEngineResponse :: (GameState -> Tuple Boolean GameState) -> GameState -> GameState
-withEngineResponse action gs = let (Tuple turnConsumed gs') = action gs in 
+withEngineResponse action gs = let (Tuple turnConsumed gs') = action gs in
   if turnConsumed 
      then unsafePartial $ advanceEnemies gs'
      else gs'
@@ -66,9 +66,9 @@ handleKey (Key key) debug = do
             log "load failed"
             pure Nothing
       | k >= 49 && k <= 57 = do
-        pure $ Just $ \gs -> (snd $ play (k - 49) gs)
+        pure $ Just $ withEngineResponse $ play (k - 49)
       | k == 0 = do
-        pure $ Just $ \gs -> (snd $ play 9 gs)
+        pure $ Just $ withEngineResponse $ play 9
       | otherwise = do
           log (show k)
           pure Nothing

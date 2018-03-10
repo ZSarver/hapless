@@ -14,7 +14,6 @@ import Control.Monad.State
 import Control.Monad.Maybe.Trans
 
 
-
 data Consequence
   = Move XY
   | Turn Facing
@@ -25,9 +24,21 @@ instance eqConsequence :: Eq Consequence where eq = genericEq
 
 interpretAction :: Enemy -> Action -> Consequence
 interpretAction (Enemy e) Forward = Move $ localToAbsolute e forward
-interpretAction (Enemy e) Left    = Turn $ rotLeft e.facing
-interpretAction (Enemy e) Right   = Turn $ rotRight e.facing
+interpretAction (Enemy e) Left    = Turn $ rotate widdershins e.facing
+interpretAction (Enemy e) Right   = Turn $ rotate clockwise e.facing
 interpretAction (Enemy e) Pass    = Noop
+
+interpretActions :: Enemy -> Array Action -> Array Consequence
+interpretActions e actions = (mapAccumL step e actions).value
+  where
+  step e a = let v = interpretAction e a in
+    { accum: applySelf v e, value: v }
+
+applySelf :: Consequence -> Enemy -> Enemy
+applySelf Noop e = e
+applySelf (Turn f) (Enemy e) = Enemy e{ facing = f } 
+applySelf (Move xy) (Enemy e) = Enemy e{ location = xy }
+
 
 isLegal :: GameState -> Consequence -> Boolean
 isLegal _ Noop = true
@@ -43,24 +54,22 @@ pop predicate array = do
   e <- find predicate array
   pure $ Tuple e (Arr.delete e array)
 
+
 perform :: Int -> Consequence -> GameState -> GameState
-perform _ Noop g = g
-perform i (Turn f) gs = liftEnemies (Arr.modifyAtIndices [i] turn) gs
-  where turn (Enemy e) =  Enemy e{ facing = f} 
-perform i (Move xy) gs = liftEnemies (Arr.modifyAtIndices [i] mv) gs
-  where mv (Enemy e)  = Enemy e{ location = xy }
+perform i c gs = liftEnemies (Arr.modifyAtIndices [i] (applySelf c)) gs
 
 advanceEnemies :: Partial => GameState -> GameState
 advanceEnemies gs@(GameState g) = result
   where
     -- Phase 1: for each enemy, determine if it wants to move, and where to
     actions = flip map g.enemies $ \e -> enemyAction g.bestiary e g.player
-    consequences = zipWith (map <<< interpretAction) g.enemies actions 
+    foo = traceAny actions (\_ -> actions)
+    consequences = zipWith interpretActions g.enemies foo 
     -- Phase 2: find enemies whose moves are in conflict 
     -- these have their Move commands turned into Noops
-    targetTiles = do
-      (Move c) <- concat consequences
-      pure c
+    targetTiles = concat consequences >>= case _ of
+                                            Move m -> [m]
+                                            _ -> []
     badMoves = do
       t <- group targetTiles
       guard (length t > 1)

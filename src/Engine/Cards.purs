@@ -34,7 +34,7 @@ play i gs@(GameState g) = case g.hand !! i of
         false -> Tuple false gs
         true -> 
           let gs' = liftHand (removeCard i) >>> liftHand (discardN (un Card c).cost) >>> handleCardEffect c $ gs
-            in Tuple true gs
+            in Tuple true gs'
 
 -- origin is the upper left, x increases to the right, y increases down
 effectCoordinates :: Player -> Int -> Array XY -> Array XY

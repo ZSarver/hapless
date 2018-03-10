@@ -3,6 +3,7 @@ module Content.Cards where
 import Batteries
 
 import Content.XY (XY(..), dummyCoordinate, rectangle, forward)
+import Content.Facing (clockwise, widdershins)
 
 data ShortCard 
   = FireBomb 
@@ -14,8 +15,8 @@ card :: ShortCard -> Card
 card c = case c of
   FireBomb -> Card { effect: [Attack {range: 4, area: (rectangle 3 3)}], cost: 0 }
   Advance -> Card { effect: [AttackMove forward], cost: 2 }
-  TurnLeft -> Card { effect: [Rotate 1], cost: 2 }
-  TurnRight -> Card { effect: [Rotate 3], cost: 2 }
+  TurnLeft -> Card { effect: [Rotate widdershins], cost: 2 }
+  TurnRight -> Card { effect: [Rotate clockwise], cost: 2 }
   _ -> dummyAttack
 
 

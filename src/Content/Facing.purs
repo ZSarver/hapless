@@ -14,19 +14,19 @@ rotate :: Int -> Facing -> Facing
 rotate n f = fromInt $ ((toInt f) + n) `mod` 4
   where
     toInt South = 0
-    toInt West = 1
+    toInt East = 1
     toInt North = 2
-    toInt East = 3
+    toInt West = 3
     fromInt 0 = South
-    fromInt 1 = West
+    fromInt 1 = East
     fromInt 2 = North
-    fromInt _ = East
+    fromInt _ = West
 
-rotLeft :: Facing -> Facing
-rotLeft = rotate 1
+clockwise :: Int
+clockwise = 3
 
-rotRight :: Facing -> Facing
-rotRight = rotate 3
+widdershins :: Int
+widdershins = 1
 
 derive instance genericFacing :: Generic Facing _
 instance showFacing :: Show Facing where show = genericShow
