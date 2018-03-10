@@ -19,7 +19,9 @@
     "purescript-foreign-generic": "^5.0.1",
     "purescript-lens": "latest",
     "purescript-debug": "^3.0.0",
-    "purescript-variant": "^4.1.0"
+    "purescript-variant": "^4.1.0",
+    "purescript-random": "latest",
+    "purescript-array-shuffle": "latest"
   },
   "devDependencies": {
     "purescript-psci-support": "^3.0.0"

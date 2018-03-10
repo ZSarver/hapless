@@ -32,7 +32,7 @@ import Data.Maybe
 import Data.Tuple
 import Data.Ord
 import Data.Variant (Variant(..), inj, SProxy(..))
-import Data.Array (head)
+import Data.Array (head, (!!))
 
 
 defaultOptions = G.defaultOptions { unwrapSingleConstructors = true }
