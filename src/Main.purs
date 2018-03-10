@@ -17,6 +17,8 @@ import Control.Monad.Aff.Class (liftAff)
 import Data.Array((!!))
 import Engine.Cards(play, handleCardEffect)
 import Content.Cards(card, ShortCard(..))
+import Partial.Unsafe (unsafePartial)
+import Engine.Enemies (advanceEnemies)
 
 main :: forall e. Eff ( console :: CONSOLE, rot :: ROT, dom :: DOM | e) Unit
 main = launchAff_ $ do
@@ -42,6 +44,12 @@ main = launchAff_ $ do
 logKey :: forall e. Key -> Aff (console :: CONSOLE | e) Unit
 logKey (Key k) = log (show (k.keyCode))
 
+withEngineResponse :: (GameState -> Tuple Boolean GameState) -> GameState -> GameState
+withEngineResponse action gs = let (Tuple turnConsumed gs') = action gs in 
+  if turnConsumed 
+     then unsafePartial $ advanceEnemies gs'
+     else gs'
+
 handleKey :: forall e. Key -> DebugBox -> Aff (console :: CONSOLE, dom :: DOM | e) (Maybe (GameState -> GameState))
 handleKey (Key key) debug = do
   action
@@ -58,9 +66,9 @@ handleKey (Key key) debug = do
             log "load failed"
             pure Nothing
       | k >= 49 && k <= 57 = do
-        pure $ Just $ play $ k - 49
+        pure $ Just $ \gs -> (snd $ play (k - 49) gs)
       | k == 0 = do
-        pure $ Just $ play 9
+        pure $ Just $ \gs -> (snd $ play 9 gs)
       | otherwise = do
           log (show k)
           pure Nothing

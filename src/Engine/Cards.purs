@@ -25,17 +25,16 @@ canPlay (Card c) (GameState g) = c.cost < (length g.hand)
 removeCard :: Int -> Hand -> Hand
 removeCard i hand = fromMaybe hand $ deleteAt i hand
 
-play :: Int -> GameState -> GameState
+play :: Int -> GameState -> Tuple Boolean GameState
 play i gs@(GameState g) = case g.hand !! i of
-  Nothing -> gs
+  Nothing -> Tuple false gs
   Just sc -> 
     let c = card sc in 
       case canPlay c gs of
-        false -> gs
+        false -> Tuple false gs
         true -> 
-          liftHand (removeCard i) 
-          >>> liftHand (discardN (un Card c).cost) 
-          >>> handleCardEffect c $ gs
+          let gs' = liftHand (removeCard i) >>> liftHand (discardN (un Card c).cost) >>> handleCardEffect c $ gs
+            in Tuple true gs
 
 -- origin is the upper left, x increases to the right, y increases down
 effectCoordinates :: Player -> Int -> Array XY -> Array XY

@@ -5,23 +5,14 @@ import Batteries
 import Content.Enemies (Enemy(..), MoveBehavior(..), AttackBehavior(..))
 import Core
 
-import Data.Ord
-import Data.Map (lookup)
-import Partial
 import Data.Array (zipWith, group, filter, concat)
 import Data.Array as Arr
-import Data.Variant (onMatch, case_, match)
+import Data.Variant (match)
 import Data.NonEmpty as NE
 import Control.MonadZero (guard)
 import Control.Monad.State
 import Control.Monad.Maybe.Trans
 
-
-data Action
-  = Forward
-  | Left
-  | Right
-  | Pass
 
 
 data Consequence
@@ -105,44 +96,6 @@ advanceEnemies gs@(GameState g) = result
 
     initial = Arr.zip (Arr.range 0 $ Arr.length consequences') consequences'
     result = evalState (loop step gs) initial
-
-enemyAction :: Partial => Bestiary -> Enemy -> Player -> Array Action
-enemyAction (Bestiary b) (Enemy e) (Player p) = move behavior (absoluteToLocal e p.location)
-  where
-    behavior = case (lookup e.species b) of
-                 Just (Tuple atk mv) -> mv
-                 Nothing -> crashWith $ "Species " <> show e.species <> " missing from bestiary."
-
-turnToward :: XY -> Action
-turnToward (XY xy)
-  | xy.x >= 0 = Left
-  | otherwise = Right
-
-
--- If it can move forward without increasing distance, it does so
--- turns quickly
--- confused if player is directly behind
-move :: MoveBehavior -> XY -> Array Action
-move Steadfast (XY xy) 
-  | xy.y > 0  = [Forward]
-  | xy.x > 0  = [Left, Forward]
-  | xy.x < 0  = [Right, Forward]
-  | otherwise = []
-
--- Always tries to reduce the greater of horizontal or vertical distance
--- turns slowly
-move Waffly target@(XY xy) 
-  | xy.y < (abs xy.x) = [turnToward target]
-  | xy.y > 0          = [Forward]
-  | otherwise         = [turnToward target]
-
--- Does not turn left
--- turns quickly
-move Righty (XY xy)
-  | xy.y > 0  = [Forward]
-  | xy.x < 0  = [Right, Forward]
-  | otherwise = [Right, Right]
-
 
 
 

@@ -9,6 +9,7 @@ module Batteries
   , module Data.Newtype
   , module Data.Foldable
   , module Data.Array
+  , module Data.Ord
   , module Data.Maybe
   , module Data.Tuple
   , module Data.Variant
@@ -27,6 +28,7 @@ import Data.Newtype (class Newtype, un, under, over)
 import Data.Foldable
 import Data.Maybe
 import Data.Tuple
+import Data.Ord
 import Data.Variant (Variant(..), inj, SProxy(..))
 import Data.Array (head)
 
