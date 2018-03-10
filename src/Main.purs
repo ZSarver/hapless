@@ -7,7 +7,7 @@ import Core
 import Control.Monad.Aff.Console(CONSOLE, log)
 import Control.Monad.Eff (Eff)
 import FFI.Rot (DisplayOptions(..), Key(..), ROT, getKey, initrotjs)
-import FFI.DOM (DOM, DebugBox, debugBox, fromDebug)
+import FFI.DOM (DOM, DebugBox, debugBox, fromDebug, combatLog)
 import Control.Monad.Aff(Aff, launchAff_)
 import Control.Monad.Rec.Class(forever)
 import Control.Monad.Eff.Class (liftEff)
@@ -22,7 +22,7 @@ import Engine.Enemies (advanceEnemies)
 
 main :: forall e. Eff ( console :: CONSOLE, rot :: ROT, dom :: DOM | e) Unit
 main = launchAff_ $ do
-  log "Hello sailor!"
+  liftEff $ combatLog "Hello!"
   let opts = DisplayOptions { width: 8
                             , height: 8
                             , tileSet: tileSet
@@ -34,12 +34,12 @@ main = launchAff_ $ do
   flip runStateT dummyGameState $ forever $ do
     gameState <- get
     liftAff $ render gameState rotjs
+    liftAff $ log (serialize gameState)
     key <- liftAff $ getKey rotjs
     action <- liftAff $ handleKey key debug
     case action of
       Nothing -> pure unit
       Just f -> modify f
-    liftAff $ log (serialize gameState)
 
 logKey :: forall e. Key -> Aff (console :: CONSOLE | e) Unit
 logKey (Key k) = log (show (k.keyCode))
@@ -49,6 +49,9 @@ withEngineResponse action gs = let (Tuple turnConsumed gs') = action gs in
   if turnConsumed 
      then unsafePartial $ advanceEnemies gs'
      else gs'
+
+pass :: GameState -> GameState
+pass = withEngineResponse $ \gs -> Tuple true gs
 
 handleKey :: forall e. Key -> DebugBox -> Aff (console :: CONSOLE, dom :: DOM | e) (Maybe (GameState -> GameState))
 handleKey (Key key) debug = do
@@ -69,6 +72,7 @@ handleKey (Key key) debug = do
         pure $ Just $ withEngineResponse $ play (k - 49)
       | k == 0 = do
         pure $ Just $ withEngineResponse $ play 9
+      | k == space = pure $ Just $ pass
       | otherwise = do
           log (show k)
           pure Nothing
@@ -76,6 +80,9 @@ handleKey (Key key) debug = do
 -- backtick `
 debugLoadState :: Int
 debugLoadState = 192
+
+space :: Int
+space = 32
 
 -- 0
 zero :: Int

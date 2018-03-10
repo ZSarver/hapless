@@ -16,3 +16,6 @@ foreign import fromDebug :: forall e. DebugBox -> Eff (dom :: DOM | e) String
 foreign import putCardText :: forall e. Int -> String -> Eff (dom :: DOM | e) Unit
 
 foreign import clearCardText :: forall e. Int -> Eff (dom :: DOM | e) Unit
+
+foreign import combatLog :: forall e. String -> Eff (dom :: DOM | e) Unit
+
