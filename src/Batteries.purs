@@ -14,6 +14,8 @@ module Batteries
   , module Data.Maybe
   , module Data.Tuple
   , module Data.Variant
+  , module Control.Monad.State.Class
+  , module Control.Monad.State.Trans
   , defaultOptions
   ) where
 
@@ -28,6 +30,8 @@ import Data.Generic.Rep.Ord (genericCompare)
 import Data.Newtype (class Newtype, un, under, over)
 import Data.Foldable
 import Data.Traversable
+import Control.Monad.State.Class
+import Control.Monad.State.Trans
 import Data.Maybe
 import Data.Tuple
 import Data.Ord
