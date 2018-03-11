@@ -14,6 +14,7 @@ data ShortCard
   | TurnAround
   | Back
   | AttackFront
+  | Pass
 
 card :: ShortCard -> Card
 card c = case c of
@@ -25,6 +26,7 @@ card c = case c of
   Back -> Card {effect: [Move back], cost: 3}
   DoubleAdvance → Card {effect: [AttackMove forward, AttackMove forward], cost: 4 }
   AttackFront → Card { effect: [Attack {range: 1, area: (rectangle 1 1)}], cost: 1 }
+  Pass -> Card { effect: [], cost: 0 }
   _ -> dummyAttack
 
 

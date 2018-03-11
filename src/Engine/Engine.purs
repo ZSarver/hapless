@@ -13,6 +13,14 @@ import Control.Monad.Eff.Random
 
 newtype Engine e a = Engine (StateT GameState (Aff (dom :: DOM, random :: RANDOM | e)) a)
 
+tellLn :: forall e. String -> Engine e Unit
+tellLn s = do 
+  tell s
+  newLine
+
+newLine :: forall e. Engine e Unit
+newLine = tell "\n"
+
 -- (dom :: DOM | e)
 derive instance newtypeEngine :: Newtype (Engine e a) _
 

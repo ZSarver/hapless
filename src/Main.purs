@@ -19,14 +19,12 @@ import Control.Monad.Aff.Class (liftAff)
 import Data.Array((!!))
 import Engine.Cards(play, handleCardEffect)
 import Content.Cards(card, ShortCard(..))
-import Partial.Unsafe (unsafePartial)
 import Engine.Enemies (advanceEnemies)
 import Engine.Engine
 import Engine.Floor
 
 main :: forall e. Eff ( console :: CONSOLE, rot :: ROT, dom :: DOM, random :: RANDOM | e) Unit
 main = launchAff_ $ do
-  liftEff $ combatLog "Hello!"
   let opts = DisplayOptions { width: 8
                             , height: 8
                             , tileSet: tileSet
@@ -59,9 +57,10 @@ withEngineResponse action = do
   turnConsumed <- action
   let ableToPlay = turnConsumed && g.hp > 0
   let dead = g.hp <= 0
-  when ableToPlay $ advanceFloor (g.floor + 1)
-  when ableToPlay $ unsafePartial $ advanceEnemies
-  when ableToPlay $ draw 3
+  when ableToPlay $ do
+    advanceFloor (g.floor + 1)
+    advanceEnemies
+    draw 3
   when (dead) $ tell "You're dead."
 
 pass :: forall e. Engine e Unit

@@ -19,7 +19,6 @@ exports.setDivContents = function(text) {
 exports.combatLog = function(text) {
     return function() {
       var log = document.getElementById("log")
-      log.append("\n")
       log.append(text)
       log.scrollTop = log.scrollHeight
     }

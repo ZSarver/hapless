@@ -26,12 +26,13 @@ play i = do
           t = canPlay c gs
       in do
          _ <- when t $ do 
-           tell $ "You play " <> show sc <> "."
+           tell $ "You play " <> show sc <> ". "
            discardAt i
            discardN (un Card c).cost
+           newLine
            handleCardEffect c
          _ ← when (not t) $ do
-           tell $ "Can't play that card!"
+           tell $ "Can't play that card! "
          pure t
 
 -- origin is the upper left, x increases to the right, y increases down
