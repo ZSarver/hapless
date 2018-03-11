@@ -12,7 +12,8 @@ import Core.Player
 import Control.Monad.Eff(Eff(..))
 import Control.Monad.Eff.Class(liftEff)
 import Control.Monad.Eff.Random
-import Data.Array (replicate)
+import Control.Monad.Rec.Class
+import Data.Array (replicate, filter)
 
 advanceFloor ∷ ∀ e. Int → Engine e Unit
 advanceFloor n = do
@@ -20,8 +21,9 @@ advanceFloor n = do
   let (Player p) = g.player
   -- we need to generate new stuff
   enemies' ← enemies_ g
-  stairs' ← stairs_ g
-  put $ if p.location == g.stairs then GameState (g {enemies = enemies', stairs = stairs', floor = n}) else GameState g
+  let enemies'' = filter (\(Enemy e) → p.location /= e.location) enemies'
+  stairs' ← genStairs
+  put $ if p.location == g.stairs then GameState (g {enemies = enemies'', stairs = stairs', floor = n}) else GameState g
   where
     -- boundaries_ g = liftEff $ do
     --   xmax' ← randomInt (n + 4) (n + 8)
@@ -31,12 +33,15 @@ advanceFloor n = do
       let n = g.floor
       numEnemies ← randomInt n (n + 2)
       sequence $ replicate numEnemies (genRandomEnemy (GameState g))
-    stairs_ g = liftEff $ do
-      let (Box b) = g.boundaries
-      x' ← randomInt b.xmin b.xmax
-      y' ← randomInt b.ymin b.ymax
-      pure $ XY {x: x', y: y'}
-      
+
+genStairs ∷ ∀ e. Engine e XY
+genStairs = flip tailRecM unit \_ → do
+  (GameState g) ← get
+  let (Box b) = g.boundaries
+  let (Player p) = g.player
+  x' ← liftEff $ randomInt b.xmin b.xmax
+  y' ← liftEff $ randomInt b.ymin b.ymax
+  pure $ if XY {x: x', y: y'} == p.location then Loop unit else Done $ XY {x: x', y: y'}
 
 genRandomEnemy ∷ ∀ e. GameState → Eff (random ∷ RANDOM | e) Enemy
 genRandomEnemy (GameState g) = do
