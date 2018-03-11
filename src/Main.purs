@@ -57,9 +57,11 @@ withEngineResponse action = do
   (GameState g) ← get
   let (Player p) = g.player
   turnConsumed <- action
-  when turnConsumed $ advanceFloor (g.floor + 1)
-  when turnConsumed $ unsafePartial $ advanceEnemies
-  when turnConsumed $ draw 3
+  let ableToPlay = turnConsumed && g.hp > 0
+  when ableToPlay $ advanceFloor (g.floor + 1)
+  when ableToPlay $ unsafePartial $ advanceEnemies
+  when ableToPlay $ draw 3
+  when (not ableToPlay) $ tell "You're dead."
 
 pass :: forall e. Engine e Unit
 pass = withEngineResponse $ pure true
