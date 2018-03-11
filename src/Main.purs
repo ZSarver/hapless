@@ -22,6 +22,7 @@ import Content.Cards(card, ShortCard(..))
 import Partial.Unsafe (unsafePartial)
 import Engine.Enemies (advanceEnemies)
 import Engine.Engine
+import Engine.Floor
 
 main :: forall e. Eff ( console :: CONSOLE, rot :: ROT, dom :: DOM, random :: RANDOM | e) Unit
 main = launchAff_ $ do
@@ -53,7 +54,10 @@ logKey (Key k) = log (show (k.keyCode))
 
 withEngineResponse :: forall e. Engine e Boolean -> Engine e Unit
 withEngineResponse action = do
+  (GameState g) ← get
+  let (Player p) = g.player
   turnConsumed <- action
+  when turnConsumed $ advanceFloor (g.floor + 1)
   when turnConsumed $ unsafePartial $ advanceEnemies
   when turnConsumed $ draw 3
 

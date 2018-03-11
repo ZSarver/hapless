@@ -7,19 +7,21 @@ import Content.Enemies
 import Content.XY
 import Content.Facing
 import Core.Box
+import Core.Player
 
 import Control.Monad.Eff(Eff(..))
 import Control.Monad.Eff.Class(liftEff)
 import Control.Monad.Eff.Random
 import Data.Array (replicate)
 
-newFloor ∷ ∀ e. Int → Engine e Unit
-newFloor n = do
+advanceFloor ∷ ∀ e. Int → Engine e Unit
+advanceFloor n = do
   (GameState g) ← get
+  let (Player p) = g.player
   -- we need to generate new stuff
   enemies' ← enemies_ g
   stairs' ← stairs_ g
-  put $ GameState (g {enemies = enemies', stairs = stairs'})
+  put $ if p.location == g.stairs then GameState (g {enemies = enemies', stairs = stairs', floor = n}) else GameState g
   where
     -- boundaries_ g = liftEff $ do
     --   xmax' ← randomInt (n + 4) (n + 8)
