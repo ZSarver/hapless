@@ -9,13 +9,26 @@ foreign import data DebugBox :: Type
 
 foreign import debugBox :: forall e. Eff (dom :: DOM | e) DebugBox
 
-foreign import toDebug :: forall e. String -> DebugBox -> Eff (dom :: DOM | e) Unit
-
 foreign import fromDebug :: forall e. DebugBox -> Eff (dom :: DOM | e) String
 
-foreign import putCardText :: forall e. Int -> String -> Eff (dom :: DOM | e) Unit
-
-foreign import clearCardText :: forall e. Int -> Eff (dom :: DOM | e) Unit
-
 foreign import combatLog :: forall e. String -> Eff (dom :: DOM | e) Unit
+
+foreign import setDivContents :: forall a e. a -> String -> Eff (dom :: DOM | e) Unit
+
+putCardText :: forall e. Int -> String -> Eff (dom :: DOM | e) Unit
+putCardText id text = setDivContents text ("card " <> show id)
+
+clearCardText :: forall e. Int -> Eff (dom :: DOM | e) Unit
+clearCardText id = setDivContents "" ("card " <> show id)
+
+displayHp :: forall e. Int ->  Eff (dom :: DOM | e) Unit
+displayHp i = setDivContents ("HP: " <> show i) "hp"
+
+
+displayDeck :: forall e. Int ->  Eff (dom :: DOM | e) Unit
+displayDeck i = setDivContents ("Draw pile: " <> show i) "deck"
+
+
+displayDiscard :: forall e. Int ->  Eff (dom :: DOM | e) Unit
+displayDiscard i = setDivContents ("Discard pile: " <> show i) "discard"
 

@@ -4,13 +4,14 @@ import Batteries
 
 import Core.GameState (GameState(..))
 import Core.Player(Player(..))
+import Core.Deck (drawPile, discardPile)
 import Content.Enemies (Enemy(..), Species(..))
 import Content.Cards (ShortCard)
 import Content.Tiles as T
 import Content.Facing (Facing(..))
 import Content.XY (XY(..))
 import FFI.Rot (ROT, RotInstance, clear, putTile, putTile2)
-import FFI.DOM (clearCardText, putCardText, DOM)
+import FFI.DOM
 import Control.Monad.Aff (Aff)
 import Data.Array (concat, range, zip, (..))
 import Data.Traversable (sequence_)
@@ -43,6 +44,9 @@ render (GameState gs) rotjs = do
   placeFloor rotjs
   renderPlayer gs.player rotjs
   renderCards gs.hand 
+  liftEff $ displayHp gs.hp
+  liftEff $ displayDeck (length $ drawPile gs.deck)
+  liftEff $ displayDiscard (length $ discardPile gs.deck)
   sequence_ $ map (flip renderEnemy rotjs) gs.enemies
 
 renderPlayer :: forall e. Player -> RotInstance -> Aff (rot :: ROT | e) Unit

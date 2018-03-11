@@ -7,28 +7,11 @@ exports.debugBox = function() {
   return d
 }
 
-exports.putCardText = function(cardNumber) {
-  return function(text) {
+exports.setDivContents = function(text) {
+  return function(divId) {
     return function() {
-      var s = "card " + cardNumber
-      var div = document.getElementById("card " + cardNumber)
-      div.innerText = text
-    }
-  }
-}
-
-exports.clearCardText = function(cardNumber) {
-  return function() {
-    var s = "card " + cardNumber
-    var div = document.getElementById("card " + cardNumber)
-    div.innerText = ""
-  }
-}
-
-exports.toDebug = function(text) {
-  return function(textBox) {
-    return function() {
-      textBox.value = text
+    var div = document.getElementById(divId)
+    div.innerText = text
     }
   }
 }
