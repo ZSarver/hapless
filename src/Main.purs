@@ -54,7 +54,7 @@ logKey (Key k) = log (show (k.keyCode))
 withEngineResponse :: forall e. (GameState -> Tuple Boolean GameState) -> Engine e Unit
 withEngineResponse action = do
   turnConsumed <- state action
-  when turnConsumed $ unsafePartial $ modify advanceEnemies
+  when turnConsumed $ unsafePartial $ advanceEnemies
 
 
 pass :: forall e. Engine e Unit

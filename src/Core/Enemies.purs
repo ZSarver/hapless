@@ -47,6 +47,7 @@ move Waffly target@(XY xy)
 -- turns quickly
 move Righty target@(XY xy)
   | target == forward = [Strike]
+  | target == right = [Right, Strike]
   | xy.y > 0  = [Forward]
   | xy.x < 0  = [Right, Forward]
   | otherwise = [Right, Right]

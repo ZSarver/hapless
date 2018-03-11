@@ -4,7 +4,7 @@ import Batteries
 
 import Core.Box
 import Core.Player (Player(..), dummyPlayer)
-import Content.Enemies (Enemy(..), dummyEnemy)
+import Content.Enemies (Enemy(..), dummyEnemy, dummyEnemy2)
 import Core.Bestiary
 import Content.Cards (Hand, ShortCard (..))
 import Data.Maybe
@@ -82,8 +82,9 @@ dummyGameState = GameState
   { player: dummyPlayer
   , hand: [FireBomb, Advance, TurnLeft, Advance, TurnRight, Advance, Advance, Advance, Advance, Advance]
   , hp: 10
-  , enemies: [dummyEnemy]
+  , enemies: [dummyEnemy, dummyEnemy2]
   , bestiary: dummyBestiary 
   , boundaries: Box {xmin: 1, xmax: 6, ymin: 1, ymax: 6}
   , deck: Deck [FireBomb, Advance, FireBomb] ([] :: Array ShortCard)
   }
+
