@@ -26,6 +26,8 @@ newtype GameState = GameState
   , bestiary :: Bestiary
   , boundaries :: Box
   , deck :: Deck
+  , stairs ∷ XY
+  , floor ∷ Int
   }
 
 liftHp :: (Int -> Int) -> GameState -> GameState
@@ -97,5 +99,7 @@ dummyGameState = GameState
   , bestiary: dummyBestiary 
   , boundaries: Box {xmin: 1, xmax: 6, ymin: 1, ymax: 6}
   , deck: Deck [Advance, Advance, Advance, TurnLeft, TurnRight] ([] :: Array ShortCard)
+  , stairs: XY {x: 3, y: 3}
+  , floor: 1
   }
 
