@@ -77,7 +77,7 @@ handleKey (Key key) debug = do
             pure Nothing
       | k >= 49 && k <= 57 = do
         pure $ Just $ withEngineResponse $ play (k - 49)
-      | k == 0 = do
+      | k == zero = do
         pure $ Just $ withEngineResponse $ play 9
       | k == space = pure $ Just $ pass
       | otherwise = do
