@@ -16,7 +16,7 @@ import Control.Monad.Maybe.Trans
 import Engine.Engine
 import Control.Monad.Rec.Class
 import Control.Monad.Writer.Class (tell)
-
+import Engine.Deck
 
 data Consequence
   = Move XY
@@ -35,7 +35,10 @@ interpretAction _ (Enemy e) Forward = Move $ localToAbsolute e forward
 interpretAction _ (Enemy e) Left    = Turn $ rotate widdershins e.facing
 interpretAction _ (Enemy e) Right   = Turn $ rotate clockwise e.facing
 interpretAction _ (Enemy e) Pass    = Noop
-interpretAction _ (Enemy e) Strike  = Damage 1
+interpretAction b (Enemy e) Strike  = case attackBehavior b e.species of
+  Smash -> Damage 1
+  Rend -> Discard 2
+  Befuddle -> Deadcard 2
 
 interpretActions :: Bestiary -> Enemy -> Array Action -> Array Consequence
 interpretActions b e actions = (mapAccumL step e actions).value
@@ -47,28 +50,50 @@ interpretActions b e actions = (mapAccumL step e actions).value
 getEnemy :: forall e. Int -> Engine e (Maybe Enemy)
 getEnemy i = flip map get $ \(GameState g) -> Arr.index g.enemies i
 
-logEnemyAction :: forall e. Int -> Consequence -> Engine e Unit
-logEnemyAction i (Damage n) = getEnemy i >>= case _ of
-  Nothing -> pure unit
-  Just (Enemy e) -> do
-    tell $ "The " <> show e.species <> " hits you. You take " <> show n <> " damage."
+isAttack :: Consequence -> Boolean
+isAttack (Damage _) = true
+isAttack (Discard _) = true
+isAttack (Deadcard _) = true
+isAttack (Knockback _) = true
+isAttack _ = false
 
-logEnemyAction _ _ = pure unit
+logEnemyAction :: forall e. Int -> Consequence -> Engine e Unit
+logEnemyAction i c 
+  | isAttack c = getEnemy i >>= case _ of
+    Nothing -> pure unit
+    Just (Enemy e) -> do
+      tell $ "The " <> show e.species <> " hits you. "
+  | otherwise = pure unit
 
 performE :: forall e. Int -> Consequence -> Engine e Unit
 performE i c = do
   modify $ liftEnemies (Arr.modifyAtIndices [i] (applySelf c))
-  modify $ liftHp (applyDamage c)
   logEnemyAction i c
+  applyPlayer c
  
 applySelf :: Consequence -> Enemy -> Enemy
 applySelf (Turn f) (Enemy e) = Enemy e{ facing = f } 
 applySelf (Move xy) (Enemy e) = Enemy e{ location = xy }
 applySelf _ e = e
 
-applyDamage :: Consequence -> Int -> Int
-applyDamage (Damage n) hp = hp - n
-applyDamage _ hp = hp
+applyPlayer :: forall e. Consequence -> Engine e Unit
+applyPlayer (Damage n) = do
+  modify $ liftHp $ (_ - n)
+  tell $ "You take " <> show n <> " damage."
+
+applyPlayer (Discard n) = do
+  (GameState g) <- get
+  let h = Arr.length g.hand
+  tell $ "You lose " <> show n <> " cards."
+  discardN n
+  when (h < n) do 
+    tell $ "You don't have enough cards!"
+    applyPlayer (Damage (n - h))
+
+applyPlayer (Deadcard n) = pure unit
+
+
+applyPlayer _ = pure unit
 
 isLegal :: GameState -> Consequence -> Boolean
 isLegal gs (Move xy) = onMatch { empty: \_ -> true } (const false) (at gs xy)
