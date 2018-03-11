@@ -39,7 +39,7 @@ genFloor n = do
     --   pure $ Box {xmin: 1, xmax: xmax', ymin: 1, ymax: ymax'}
     enemies_ g = liftEff $ do
       let n = g.floor
-      numEnemies ← randomInt n (n + 2)
+      numEnemies ← randomInt n (n * 2)
       sequence $ replicate numEnemies (genRandomEnemy (GameState g))
 
 genStairs ∷ ∀ e. Engine e XY
