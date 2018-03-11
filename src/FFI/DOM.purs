@@ -21,9 +21,11 @@ putCardText id text = setDivContents text ("card " <> show id)
 clearCardText :: forall e. Int -> Eff (dom :: DOM | e) Unit
 clearCardText id = setDivContents "" ("card " <> show id)
 
+displayFloor :: forall e. Int ->  Eff (dom :: DOM | e) Unit
+displayFloor i = setDivContents ("Floor: " <> show i) "floor"
+
 displayHp :: forall e. Int ->  Eff (dom :: DOM | e) Unit
 displayHp i = setDivContents ("HP: " <> show i) "hp"
-
 
 displayDeck :: forall e. Int ->  Eff (dom :: DOM | e) Unit
 displayDeck i = setDivContents ("Draw pile: " <> show i) "deck"
