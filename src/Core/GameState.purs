@@ -31,6 +31,9 @@ newtype GameState = GameState
 liftHp :: (Int -> Int) -> GameState -> GameState
 liftHp f (GameState g) = GameState g{ hp = f g.hp }
 
+liftDeck :: (Deck -> Deck) -> GameState -> GameState
+liftDeck f (GameState g) = GameState g{ deck = f g.deck }
+
 liftHand :: (Hand -> Hand) -> GameState -> GameState
 liftHand f (GameState g) = GameState g{ hand = f g.hand }
 

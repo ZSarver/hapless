@@ -5,6 +5,7 @@ import Batteries
 import Content.Enemies (Enemy(..), MoveBehavior(..), AttackBehavior(..))
 import Core
 
+import Core.Util
 import Data.Array (zipWith, group, filter, concat)
 import Data.Array as Arr
 import Data.Variant (match, onMatch)
@@ -70,11 +71,6 @@ applyDamage _ hp = hp
 isLegal :: GameState -> Consequence -> Boolean
 isLegal gs (Move xy) = onMatch { empty: \_ -> true } (const false) (at gs xy)
 isLegal _ _ = true
-
-pop :: forall a. (Eq a) => (a -> Boolean) -> Array a -> Maybe (Tuple a (Array a))
-pop predicate array = do
-  e <- find predicate array
-  pure $ Tuple e (Arr.delete e array)
 
 
 advanceEnemies :: forall e. Partial => Engine e Unit

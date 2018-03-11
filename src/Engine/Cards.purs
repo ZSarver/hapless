@@ -16,9 +16,6 @@ import Engine.Deck
 canPlay :: Card -> GameState -> Boolean
 canPlay (Card c) (GameState g) = c.cost < (length g.hand)
 
-removeCard :: Int -> Hand -> Hand
-removeCard i hand = fromMaybe hand $ deleteAt i hand
-
 play :: forall e. Int -> Engine e Boolean
 play i = do
   gs@(GameState g) <- get
@@ -29,7 +26,8 @@ play i = do
           t = canPlay c gs
       in do
          _ <- when t $ do 
-           _ <- modify $ liftHand (removeCard i)
+           tell $ "You play " <> show sc <> "."
+           discardAt i
            discardN (un Card c).cost
            handleCardEffect c
          pure t
