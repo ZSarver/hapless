@@ -26,7 +26,7 @@ maxHandSize :: Int
 maxHandSize = 10
 
 defaultDrawSize :: Int
-defaultDrawSize = 10
+defaultDrawSize = 3
 
 -- draws up to max hand size
 draw :: forall e. Int -> Engine e Unit

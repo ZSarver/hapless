@@ -56,11 +56,12 @@ withEngineResponse action = do
   let (Player p) = g.player
   turnConsumed <- action
   let ableToPlay = turnConsumed && g.hp > 0
+  let dead = g.hp <= 0
   when ableToPlay $ do
     advanceFloor (g.floor + 1)
     advanceEnemies
     draw 3
-  when (not ableToPlay) $ tell "You're dead."
+  when (dead) $ tell "You're dead."
 
 pass :: forall e. Engine e Unit
 pass = withEngineResponse $ pure true
