@@ -29,6 +29,7 @@ play i = do
            tell $ "You play " <> show sc <> ". "
            discardAt i
            discardN (un Card c).cost
+           newLine
            handleCardEffect c
          _ ← when (not t) $ do
            tell $ "Can't play that card! "
