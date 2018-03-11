@@ -55,6 +55,7 @@ withEngineResponse :: forall e. (GameState -> Tuple Boolean GameState) -> Engine
 withEngineResponse action = do
   turnConsumed <- state action
   when turnConsumed $ unsafePartial $ advanceEnemies
+  when turnConsumed $ draw 3
 
 
 pass :: forall e. Engine e Unit

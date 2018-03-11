@@ -85,6 +85,6 @@ dummyGameState = GameState
   , enemies: [dummyEnemy, dummyEnemy2]
   , bestiary: dummyBestiary 
   , boundaries: Box {xmin: 1, xmax: 6, ymin: 1, ymax: 6}
-  , deck: Deck [FireBomb, Advance, FireBomb] ([] :: Array ShortCard)
+  , deck: Deck [Advance, Advance, Advance, TurnLeft, TurnRight] ([] :: Array ShortCard)
   }
 
