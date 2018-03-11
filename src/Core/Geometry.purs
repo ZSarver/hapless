@@ -32,11 +32,7 @@ posAbsoluteToLocal (XY origin) (XY xy) = XY {x: xy.x - origin.x, y: xy.y - origi
 
 
 posLocalToAbsolute :: XY -> XY -> XY
-posLocalToAbsolute (XY origin) (XY xy) = 
-  traceAny origin $ \_ ->
-    traceAny xy $ \_ ->
-      traceAny result $ \_ ->
-        result
+posLocalToAbsolute (XY origin) (XY xy) = result
   where
     result = XY {x: xy.x + origin.x, y: xy.y + origin.y}
 

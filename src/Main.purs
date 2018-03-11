@@ -22,6 +22,7 @@ import Content.Cards(card, ShortCard(..))
 import Engine.Enemies (advanceEnemies)
 import Engine.Engine
 import Engine.Floor
+import Debug.Trace (traceAny)
 
 main :: forall e. Eff ( console :: CONSOLE, rot :: ROT, dom :: DOM, random :: RANDOM | e) Unit
 main = launchAff_ $ do
@@ -37,8 +38,7 @@ main = launchAff_ $ do
     genFloor 1
     forever $ do
       gameState <- get
-      liftAff $ render gameState rotjs
-      liftAff $ log (serialize gameState)
+      liftAff $ render (traceAny gameState $ \_ -> gameState) rotjs
       key <- liftAff $ getKey rotjs
       action <- liftAff $ handleKey key debug
       case action of
