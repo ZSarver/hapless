@@ -51,15 +51,14 @@ execEngine (Engine e) gs = evalStateT e gs
 logKey :: forall e. Key -> Aff (console :: CONSOLE | e) Unit
 logKey (Key k) = log (show (k.keyCode))
 
-withEngineResponse :: forall e. (GameState -> Tuple Boolean GameState) -> Engine e Unit
+withEngineResponse :: forall e. Engine e Boolean -> Engine e Unit
 withEngineResponse action = do
-  turnConsumed <- state action
+  turnConsumed <- action
   when turnConsumed $ unsafePartial $ advanceEnemies
   when turnConsumed $ draw 3
 
-
 pass :: forall e. Engine e Unit
-pass = withEngineResponse $ \gs -> Tuple true gs
+pass = withEngineResponse $ pure true
 
 handleKey :: forall e. Key -> DebugBox -> Aff (console :: CONSOLE, dom :: DOM, random :: RANDOM | e) (Maybe (Engine (console :: CONSOLE | e) Unit))
 handleKey (Key key) debug = do

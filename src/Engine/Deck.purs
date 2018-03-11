@@ -40,8 +40,8 @@ draw n = do
       | (canDraw g) > (length (drawPile g.deck)) = liftEff $ shuffleDeck g.deck
       | otherwise = pure g.deck
 
-discard :: forall e. Int -> Engine e Unit
-discard n = do
+discardN :: forall e. Int -> Engine e Unit
+discardN n = do
   (GameState g) <- get
   let h = g.hand
   let discarded = if (length h) < n then [] else (take n h)

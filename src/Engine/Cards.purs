@@ -10,6 +10,8 @@ import Data.Array(length, drop, (!!), deleteAt, filter, notElem, elem, zipWith, 
 import Control.Monad.State (execState, modify)
 import Data.Foldable (sequence_)
 import Debug.Trace (traceAny)
+import Engine.Engine
+import Engine.Deck
 
 canPlay :: Card -> GameState -> Boolean
 canPlay (Card c) (GameState g) = c.cost < (length g.hand)
@@ -17,16 +19,20 @@ canPlay (Card c) (GameState g) = c.cost < (length g.hand)
 removeCard :: Int -> Hand -> Hand
 removeCard i hand = fromMaybe hand $ deleteAt i hand
 
-play :: Int -> GameState -> Tuple Boolean GameState
-play i gs@(GameState g) = case g.hand !! i of
-  Nothing -> Tuple false gs
-  Just sc -> 
-    let c = card sc in 
-      case canPlay c gs of
-        false -> Tuple false gs
-        true -> 
-          let gs' = liftHand (removeCard i) >>> liftHand (discardN (un Card c).cost) >>> handleCardEffect c $ gs
-            in Tuple true gs'
+play :: forall e. Int -> Engine e Boolean
+play i = do
+  gs@(GameState g) <- get
+  case g.hand !! i of
+    Nothing -> pure false
+    Just sc -> 
+      let c = card sc 
+          t = canPlay c gs
+      in do
+         _ <- when t $ do 
+           _ <- modify $ liftHand (removeCard i)
+           discardN (un Card c).cost
+           handleCardEffectE c
+         pure t
 
 -- origin is the upper left, x increases to the right, y increases down
 effectCoordinates :: Player -> Int -> Array XY -> Array XY
@@ -46,6 +52,10 @@ effectCoordinates (Player p) range area = do
         xcoords = zipWith (+) xoffsets (replicate (length xoffsets) (x effectCenter))
         yoffsets = map y area
         ycoords = zipWith (+) yoffsets (replicate (length yoffsets) (y effectCenter))
+
+
+handleCardEffectE :: forall e. Card -> Engine e Unit
+handleCardEffectE (Card c) = sequence_ $ map (\e -> modify (handle1CardEffect e)) c.effect
 
 handleCardEffect :: Card -> GameState -> GameState
 handleCardEffect (Card c) g = flip execState g $ do
