@@ -58,7 +58,7 @@ padN n card
 pushToHand :: forall e. ShortCard -> Engine e Unit
 pushToHand c = do
   modify $ liftHand $ \h -> h <> [c]
-  tell $ show $ show c <> " is added to your hand. "
+  tell $ show c <> " is added to your hand. "
 
 pushToDiscard :: forall e. ShortCard -> Engine e Unit
 pushToDiscard c = 
