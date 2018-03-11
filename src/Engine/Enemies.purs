@@ -17,6 +17,7 @@ import Engine.Engine
 import Control.Monad.Rec.Class
 import Control.Monad.Writer.Class (tell)
 import Engine.Deck
+import Content.Cards as Cards
 
 data Consequence
   = Move XY
@@ -86,12 +87,21 @@ applyPlayer (Discard n) = do
   (GameState g) <- get
   let h = Arr.length g.hand
   tell $ "You lose " <> show n <> " cards. "
-  discardN n
-  when (h < n) do 
+  remainder <- discardN n
+  when (remainder > 0) do 
     tell $ "You don't have enough cards! "
-    applyPlayer (Damage (n - h))
+    applyPlayer (Damage remainder)
 
-applyPlayer (Deadcard n) = pure unit
+applyPlayer (Deadcard n) = do
+  (GameState g) <- get
+  let h = Arr.length g.hand
+  tell $ "You gain " <> show n <> " cards. "
+  remainder <- padN n Cards.Pass
+  when (remainder > 0) $ do
+    tell "You have too many cards! "
+    applyPlayer (Damage remainder)
+  
+  
 
 
 applyPlayer _ = pure unit

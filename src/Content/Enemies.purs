@@ -52,4 +52,4 @@ type Gaggle = Array Enemy
 dummyEnemy :: Enemy
 dummyEnemy = Enemy { species: Skeleton, location: XY {x: 6, y: 2}, facing: South}
 
-dummyEnemy2 = Enemy { species: Slime, location: XY {x: 1, y: 2}, facing: West }
+dummyEnemy2 = Enemy { species: Ghost, location: XY {x: 1, y: 2}, facing: West }

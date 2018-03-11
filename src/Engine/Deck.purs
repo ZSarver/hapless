@@ -42,6 +42,24 @@ draw n = do
       | (canDraw g) > (length (drawPile g.deck)) = liftEff $ shuffleDeck g.deck
       | otherwise = pure g.deck
 
+
+padN :: forall e. Int ->  ShortCard -> Engine e Int
+padN n card 
+  | n <= 0 = pure n
+  | otherwise = do
+  (GameState g) <- get
+  let numCards = Arr.length g.hand
+  if (numCards < maxHandSize)
+    then do
+      pushToHand card
+      padN (n - 1) card
+    else pure n
+
+pushToHand :: forall e. ShortCard -> Engine e Unit
+pushToHand c = do
+  modify $ liftHand $ \h -> h <> [c]
+  tell $ show $ show c <> " is added to your hand. "
+
 pushToDiscard :: forall e. ShortCard -> Engine e Unit
 pushToDiscard c = 
   when (c /= Pass) $ modify $ liftDeck $ \(Deck draw discard) -> Deck draw (Arr.cons c discard)
@@ -59,12 +77,14 @@ discardAt i = do
 catString :: Array String -> String
 catString = foldMap id
 
-discardN :: forall e. Int -> Engine e Unit
+discardN :: forall e. Int -> Engine e Int
 discardN n = do
   (GameState g) <- get
   let h = g.hand
   let discarded = take n h
+      numDiscarded = Arr.length discarded
   tell $ catString $ ["Cards discarded: "] <>
     map (\c -> show c <> " ") discarded
   modify $ liftHand $ drop n
   sequence_ $ map pushToDiscard discarded
+  pure (n - numDiscarded)

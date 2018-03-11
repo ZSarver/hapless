@@ -28,7 +28,7 @@ play i = do
          _ <- when t $ do 
            tell $ "You play " <> show sc <> ". "
            discardAt i
-           discardN (un Card c).cost
+           _ <- discardN (un Card c).cost
            newLine
            handleCardEffect c
          _ ← when (not t) $ do
@@ -51,8 +51,9 @@ effectCoordinates (Player p) range area = do
 
 kill :: forall e. Enemy -> Engine e Unit
 kill (Enemy e) = do
-  tell $ "You kill the " <> show e.species <> "."
+  tell $ "You kill the " <> show e.species <> ". "
   modify $ removeEnemyAt (e.location)
+  newLine
 
 handleCardEffect :: forall e. Card -> Engine e Unit
 handleCardEffect (Card c) = sequence_ $ map handle1CardEffect c.effect
