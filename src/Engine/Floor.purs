@@ -24,6 +24,7 @@ advanceFloor n = do
 genFloor :: forall e. Int -> Engine e Unit
 genFloor n = do
   tellLn $ "Welcome to floor " <> show n <> ". "
+  modify $ liftHp $ \x -> x + 1
   (GameState g) ← get
   let (Player p) = g.player
   -- we need to generate new stuff

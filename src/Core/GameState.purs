@@ -95,7 +95,7 @@ dummyGameState :: GameState
 dummyGameState = GameState 
   { player: dummyPlayer
   , hand: [Advance, TurnLeft, Advance, TurnRight, Advance]
-  , hp: 10
+  , hp: 9
   , enemies: [dummyEnemy, dummyEnemy2]
   , bestiary: dummyBestiary 
   , boundaries: Box {xmin: 1, xmax: 6, ymin: 1, ymax: 6}
