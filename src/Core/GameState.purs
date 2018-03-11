@@ -15,6 +15,7 @@ import Optic.Types
 import Content.XY
 import Data.Either
 import Core.Deck
+import Data.Array as Arr
 
 
 newtype GameState = GameState
@@ -53,21 +54,28 @@ deserialize s = case un Identity (runExceptT (genericDecodeJSON defaultOptions s
   Right x -> Just x
   Left _ -> Nothing
 
-at :: GameState -> XY -> Variant (player :: Player, enemy :: Enemy, empty :: Unit)
-at (GameState g) xy = 
-  if (un Player g.player).location == xy 
-    then inj (SProxy :: SProxy "player") g.player
-    else 
+removeEnemyAt :: XY -> GameState -> GameState
+removeEnemyAt xy = liftEnemies $ Arr.filter (\(Enemy e) -> e.location /= xy)
+ 
+at :: GameState -> XY -> Variant (player :: Player, enemy :: Enemy, empty :: Unit, wall:: Unit)
+at (GameState g) xy
+  | (un Player g.player).location == xy = inj (SProxy :: SProxy "player") g.player
+  | not $ inBounds xy g.boundaries = inj (SProxy :: SProxy "wall") unit
+  | otherwise = 
       case find (\(Enemy e) -> e.location == xy) g.enemies of
         (Just e) -> inj (SProxy :: SProxy "enemy") e
         Nothing -> inj (SProxy :: SProxy "empty") unit
 
-setLocation :: GameState -> XY -> GameState
-setLocation (GameState g) l = GameState g'
+inBounds :: XY -> Box -> Boolean
+inBounds (XY l) (Box b) = (b.xmin <= l.x) && (b.xmax >= l.x) && (b.ymin <= l.y) && (b.ymax >= l.y)
+
+movePlayerTo :: GameState -> XY -> GameState
+movePlayerTo gs@(GameState g) xy@(XY l) = if legal
+  then GameState g{ player = p' }
+  else gs
   where
-    (Player p) = g.player
-    p' = p {location = l}
-    g' = g {player = Player p'}
+    p' = over Player ( _{ location = xy } ) g.player
+    legal = inBounds xy g.boundaries
 
 getLocation :: GameState -> XY
 getLocation (GameState g) = p.location
@@ -75,7 +83,7 @@ getLocation (GameState g) = p.location
     (Player p) = g.player
 
 locationLens :: Lens' GameState XY
-locationLens = lens (getLocation) (setLocation)
+locationLens = lens (getLocation) (movePlayerTo)
 
 dummyGameState :: GameState
 dummyGameState = GameState 

@@ -31,7 +31,7 @@ play i = do
          _ <- when t $ do 
            _ <- modify $ liftHand (removeCard i)
            discardN (un Card c).cost
-           handleCardEffectE c
+           handleCardEffect c
          pure t
 
 -- origin is the upper left, x increases to the right, y increases down
@@ -53,44 +53,32 @@ effectCoordinates (Player p) range area = do
         yoffsets = map y area
         ycoords = zipWith (+) yoffsets (replicate (length yoffsets) (y effectCenter))
 
+kill :: forall e. Enemy -> Engine e Unit
+kill (Enemy e) = do
+  tell $ "You kill the " <> show e.species <> "."
+  modify $ removeEnemyAt (e.location)
 
-handleCardEffectE :: forall e. Card -> Engine e Unit
-handleCardEffectE (Card c) = sequence_ $ map (\e -> modify (handle1CardEffect e)) c.effect
+handleCardEffect :: forall e. Card -> Engine e Unit
+handleCardEffect (Card c) = sequence_ $ map handle1CardEffect c.effect
 
-handleCardEffect :: Card -> GameState -> GameState
-handleCardEffect (Card c) g = flip execState g $ do
-  sequence_ $ map (\e -> modify (handle1CardEffect e)) c.effect
+handle1CardEffect :: forall e. CardEffect -> Engine e Unit
+handle1CardEffect (Attack a) = do
+  gs@(GameState g) <- get
+  let targetSpaces = effectCoordinates g.player a.range a.area
+      targets = map (at gs) targetSpaces
+  sequence_ $ flip map targets $ onMatch
+    { enemy: \e -> kill e }
+    (const $ pure unit)
 
-handle1CardEffect :: CardEffect -> GameState -> GameState
-handle1CardEffect (Attack a) (GameState g) = GameState $ g { enemies = filter enemyFilter g.enemies }
-    where enemyFilter (Enemy e) = e.location `notElem` (effectCoordinates g.player a.range a.area)
+handle1CardEffect (AttackMove xy)  = do
+  gs@(GameState g) <- get
+  let targetLocation = localToAbsolute (un Player g.player) xy
+  onMatch 
+    { enemy: \e -> kill e
+    , empty: const $ modify $ flip movePlayerTo targetLocation 
+    } (const $ pure unit) (at gs targetLocation)
 
-handle1CardEffect (Move xy) gs@(GameState g) = movePlayerTo targetLocation gs
-  where
-    targetLocation = localToAbsolute (un Player g.player) xy
-
-handle1CardEffect (Rotate i) gs = liftPlayer (\(Player p) -> Player p{facing = rotate i p.facing}) gs
-
-handle1CardEffect (AttackMove xy) gs@(GameState g) = 
-  case enemyAtLocation targetLocation gs of
-    Nothing -> movePlayerTo targetLocation gs
-    Just _ -> removeEnemyAtLocation targetLocation gs
-  where 
-    player = un Player g.player
-    targetLocation = localToAbsolute player xy
-
-
-handle1CardEffect _ g = g
-
-enemyAtLocation :: XY -> GameState -> Maybe Enemy
-enemyAtLocation l (GameState g) = head $ filter (\(Enemy e) -> e.location == l) g.enemies
-
-movePlayerTo :: XY -> GameState -> GameState
-movePlayerTo xy@(XY l) (GameState g) = GameState g{ player = p' }
-  where
-    p' = over Player ( _{ location = xy } ) g.player
-    (Box b) = g.boundaries
-    legal = (b.xmin <= l.x) && (b.xmax >= l.x) && (b.ymin <= l.y) && (b.ymax >= l.y)
-
-removeEnemyAtLocation :: XY -> GameState -> GameState
-removeEnemyAtLocation xy = liftEnemies $ filter (\(Enemy e) -> e.location /= xy)
+handle1CardEffect (Rotate i) = modify $ liftPlayer (\(Player p) -> Player p{facing = rotate i p.facing})
+handle1CardEffect (Move xy) = do
+  (GameState g) <- get
+  modify $ flip movePlayerTo $ localToAbsolute (un Player g.player) xy

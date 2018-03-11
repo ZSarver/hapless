@@ -16,6 +16,7 @@ module Batteries
   , module Data.Variant
   , module Control.Monad.State.Class
   , module Control.Monad.State.Trans
+  , module Control.Monad.Writer.Class
   , defaultOptions
   ) where
 
@@ -32,10 +33,11 @@ import Data.Foldable
 import Data.Traversable
 import Control.Monad.State.Class
 import Control.Monad.State.Trans
+import Control.Monad.Writer.Class (tell)
 import Data.Maybe
 import Data.Tuple
 import Data.Ord
-import Data.Variant (Variant(..), inj, SProxy(..))
+import Data.Variant (Variant(..), inj, SProxy(..), onMatch, match)
 import Data.Array (head, (!!))
 
 
