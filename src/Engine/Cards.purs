@@ -14,7 +14,7 @@ import Engine.Engine
 import Engine.Deck
 
 canPlay :: Card -> GameState -> Boolean
-canPlay (Card c) (GameState g) = c.cost < (length g.hand)
+canPlay (Card c) (GameState g) = (c.cost < (length g.hand)) && (g.hp > 0)
 
 play :: forall e. Int -> Engine e Boolean
 play i = do
@@ -26,10 +26,12 @@ play i = do
           t = canPlay c gs
       in do
          _ <- when t $ do 
-           tell $ "You play " <> show sc <> "."
+           tell $ "You play " <> show sc <> ". "
            discardAt i
            discardN (un Card c).cost
            handleCardEffect c
+         _ ← when (not t) $ do
+           tell $ "Can't play that card! "
          pure t
 
 -- origin is the upper left, x increases to the right, y increases down

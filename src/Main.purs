@@ -25,7 +25,6 @@ import Engine.Floor
 
 main :: forall e. Eff ( console :: CONSOLE, rot :: ROT, dom :: DOM, random :: RANDOM | e) Unit
 main = launchAff_ $ do
-  liftEff $ combatLog "Hello!"
   let opts = DisplayOptions { width: 8
                             , height: 8
                             , tileSet: tileSet
@@ -56,9 +55,12 @@ withEngineResponse action = do
   (GameState g) ← get
   let (Player p) = g.player
   turnConsumed <- action
-  when turnConsumed $ advanceFloor (g.floor + 1)
-  when turnConsumed $ advanceEnemies
-  when turnConsumed $ draw 3
+  let ableToPlay = turnConsumed && g.hp > 0
+  when ableToPlay $ do
+    advanceFloor (g.floor + 1)
+    advanceEnemies
+    draw 3
+  when (not ableToPlay) $ tell "You're dead."
 
 pass :: forall e. Engine e Unit
 pass = withEngineResponse $ pure true

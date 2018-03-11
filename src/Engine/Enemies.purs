@@ -70,6 +70,7 @@ performE i c = do
   modify $ liftEnemies (Arr.modifyAtIndices [i] (applySelf c))
   logEnemyAction i c
   applyPlayer c
+  when (isAttack c) $ newLine
  
 applySelf :: Consequence -> Enemy -> Enemy
 applySelf (Turn f) (Enemy e) = Enemy e{ facing = f } 
@@ -79,15 +80,15 @@ applySelf _ e = e
 applyPlayer :: forall e. Consequence -> Engine e Unit
 applyPlayer (Damage n) = do
   modify $ liftHp $ (_ - n)
-  tell $ "You take " <> show n <> " damage."
+  tell $ "You take " <> show n <> " damage. "
 
 applyPlayer (Discard n) = do
   (GameState g) <- get
   let h = Arr.length g.hand
-  tell $ "You lose " <> show n <> " cards."
+  tell $ "You lose " <> show n <> " cards. "
   discardN n
   when (h < n) do 
-    tell $ "You don't have enough cards!"
+    tell $ "You don't have enough cards! "
     applyPlayer (Damage (n - h))
 
 applyPlayer (Deadcard n) = pure unit
