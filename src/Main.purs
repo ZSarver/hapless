@@ -63,7 +63,7 @@ withEngineResponse action = do
     advanceFloor (g.floor + 1)
     advanceEnemies
     draw 3
-  when (dead) $ tell "You're dead."
+  when (dead) $ tell "You're dead. "
 
 pass :: forall e. Engine e Unit
 pass = withEngineResponse $ pure true
