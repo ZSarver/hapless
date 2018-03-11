@@ -9,7 +9,6 @@ import Content.Enemies
 import Data.Array(length, drop, (!!), deleteAt, filter, notElem, elem, zipWith, replicate)
 import Control.Monad.State (execState, modify)
 import Data.Foldable (sequence_)
-import Debug.Trace (traceAny)
 import Engine.Engine
 import Engine.Deck
 
@@ -62,7 +61,7 @@ handle1CardEffect :: forall e. CardEffect -> Engine e Unit
 handle1CardEffect (Attack a) = do
   gs@(GameState g) <- get
   let targetSpaces = effectCoordinates g.player a.range a.area
-      targets = traceAny targetSpaces $ \_ -> map (at gs) targetSpaces
+      targets = map (at gs) targetSpaces
   sequence_ $ flip map targets $ onMatch
     { enemy: \e -> kill e }
     (const $ pure unit)
