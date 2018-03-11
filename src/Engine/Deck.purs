@@ -31,7 +31,7 @@ draw :: forall e. Int -> Engine e Unit
 draw n = do
   (GameState g) <- get
   deck <- mightShuffle g
-  let hand' = take (canDraw g) $ drawPile deck
+  let hand' = g.hand <> (take (canDraw g) $ drawPile deck)
   let deck' = Deck (drop (canDraw g) $ drawPile deck) (discardPile deck)
   put $ GameState (g {hand = hand', deck = deck'})
   where
