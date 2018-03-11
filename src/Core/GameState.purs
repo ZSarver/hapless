@@ -16,6 +16,7 @@ import Content.XY
 import Data.Either
 import Core.Deck
 import Data.Array as Arr
+import Content.Deck
 
 
 newtype GameState = GameState
@@ -93,12 +94,12 @@ locationLens = lens (getLocation) (movePlayerTo)
 dummyGameState :: GameState
 dummyGameState = GameState 
   { player: dummyPlayer
-  , hand: [FireBomb, Advance, TurnLeft, Advance, TurnRight, Advance, Advance, Advance, Advance, Advance]
+  , hand: [Advance, TurnLeft, Advance, TurnRight, Advance]
   , hp: 10
   , enemies: [dummyEnemy, dummyEnemy2]
   , bestiary: dummyBestiary 
   , boundaries: Box {xmin: 1, xmax: 6, ymin: 1, ymax: 6}
-  , deck: Deck [Advance, Advance, Advance, TurnLeft, TurnRight] ([] :: Array ShortCard)
+  , deck: Deck startingDeck ([] :: Array ShortCard)
   , stairs: XY {x: 3, y: 3}
   , floor: 1
   }

@@ -26,7 +26,7 @@ maxHandSize :: Int
 maxHandSize = 10
 
 defaultDrawSize :: Int
-defaultDrawSize = 10
+defaultDrawSize = 3
 
 -- draws up to max hand size
 draw :: forall e. Int -> Engine e Unit
@@ -37,7 +37,7 @@ draw n = do
   let deck' = Deck (drop (canDraw g) $ drawPile deck) (discardPile deck)
   put $ GameState (g {hand = hand', deck = deck'})
   where
-    canDraw g = min (maxHandSize - (length g.hand)) defaultDrawSize
+    canDraw g = min (maxHandSize - (length g.hand)) n
     mightShuffle g
       | (canDraw g) > (length (drawPile g.deck)) = liftEff $ shuffleDeck g.deck
       | otherwise = pure g.deck

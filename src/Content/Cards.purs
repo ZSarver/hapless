@@ -2,14 +2,18 @@ module Content.Cards where
 
 import Batteries
 
-import Content.XY (XY(..), dummyCoordinate, rectangle, forward)
+import Content.XY (XY(..), dummyCoordinate, rectangle, forward, back)
 import Content.Facing (clockwise, widdershins)
 
 data ShortCard 
   = FireBomb 
-  | Advance 
+  | Advance
+  | DoubleAdvance
   | TurnLeft
   | TurnRight
+  | TurnAround
+  | Back
+  | AttackFront
 
 card :: ShortCard -> Card
 card c = case c of
@@ -17,6 +21,10 @@ card c = case c of
   Advance -> Card { effect: [AttackMove forward], cost: 2 }
   TurnLeft -> Card { effect: [Rotate widdershins], cost: 2 }
   TurnRight -> Card { effect: [Rotate clockwise], cost: 2 }
+  TurnAround -> Card { effect: [Rotate clockwise, Rotate clockwise], cost: 3 }
+  Back -> Card {effect: [Move back], cost: 3}
+  DoubleAdvance → Card {effect: [AttackMove forward, AttackMove forward], cost: 4 }
+  AttackFront → Card { effect: [Attack {range: 1, area: (rectangle 1 1)}], cost: 1 }
   _ -> dummyAttack
 
 
@@ -25,6 +33,9 @@ data CardEffect
   | Move XY
   | AttackMove XY
   | Rotate Int
+  -- | QuickMove XY
+  -- | QuickTurn Int
+
 
 newtype Card = Card
     { effect :: Array CardEffect
