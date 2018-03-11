@@ -19,7 +19,6 @@ import Control.Monad.Aff.Class (liftAff)
 import Data.Array((!!))
 import Engine.Cards(play, handleCardEffect)
 import Content.Cards(card, ShortCard(..))
-import Partial.Unsafe (unsafePartial)
 import Engine.Enemies (advanceEnemies)
 import Engine.Engine
 import Engine.Floor
@@ -58,7 +57,7 @@ withEngineResponse action = do
   let (Player p) = g.player
   turnConsumed <- action
   when turnConsumed $ advanceFloor (g.floor + 1)
-  when turnConsumed $ unsafePartial $ advanceEnemies
+  when turnConsumed $ advanceEnemies
   when turnConsumed $ draw 3
 
 pass :: forall e. Engine e Unit

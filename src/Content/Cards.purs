@@ -10,6 +10,7 @@ data ShortCard
   | Advance 
   | TurnLeft
   | TurnRight
+  | Pass
 
 card :: ShortCard -> Card
 card c = case c of
@@ -17,6 +18,7 @@ card c = case c of
   Advance -> Card { effect: [AttackMove forward], cost: 2 }
   TurnLeft -> Card { effect: [Rotate widdershins], cost: 2 }
   TurnRight -> Card { effect: [Rotate clockwise], cost: 2 }
+  Pass -> Card { effect: [], cost: 0 }
   _ -> dummyAttack
 
 

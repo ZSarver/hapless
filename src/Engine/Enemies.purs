@@ -22,22 +22,25 @@ data Consequence
   = Move XY
   | Turn Facing
   | Damage Int
+  | Discard Int
+  | Knockback Int
+  | Deadcard Int
   | Noop
 
 derive instance genericConsequence :: Generic Consequence _
 instance eqConsequence :: Eq Consequence where eq = genericEq
 
-interpretAction :: Enemy -> Action -> Consequence
-interpretAction (Enemy e) Forward = Move $ localToAbsolute e forward
-interpretAction (Enemy e) Left    = Turn $ rotate widdershins e.facing
-interpretAction (Enemy e) Right   = Turn $ rotate clockwise e.facing
-interpretAction (Enemy e) Pass    = Noop
-interpretAction (Enemy e) Strike  = Damage 1
+interpretAction :: Bestiary -> Enemy -> Action -> Consequence
+interpretAction _ (Enemy e) Forward = Move $ localToAbsolute e forward
+interpretAction _ (Enemy e) Left    = Turn $ rotate widdershins e.facing
+interpretAction _ (Enemy e) Right   = Turn $ rotate clockwise e.facing
+interpretAction _ (Enemy e) Pass    = Noop
+interpretAction _ (Enemy e) Strike  = Damage 1
 
-interpretActions :: Enemy -> Array Action -> Array Consequence
-interpretActions e actions = (mapAccumL step e actions).value
+interpretActions :: Bestiary -> Enemy -> Array Action -> Array Consequence
+interpretActions b e actions = (mapAccumL step e actions).value
   where
-  step e a = let v = interpretAction e a in
+  step e a = let v = interpretAction b e a in
     { accum: applySelf v e, value: v }
 
 
@@ -48,8 +51,7 @@ logEnemyAction :: forall e. Int -> Consequence -> Engine e Unit
 logEnemyAction i (Damage n) = getEnemy i >>= case _ of
   Nothing -> pure unit
   Just (Enemy e) -> do
-    tell $ "The " <> show e.species <> " hits you."
-    tell $ "You take " <> show n <> " damage."
+    tell $ "The " <> show e.species <> " hits you. You take " <> show n <> " damage."
 
 logEnemyAction _ _ = pure unit
 
@@ -73,12 +75,12 @@ isLegal gs (Move xy) = onMatch { empty: \_ -> true } (const false) (at gs xy)
 isLegal _ _ = true
 
 
-advanceEnemies :: forall e. Partial => Engine e Unit
+advanceEnemies :: forall e. Engine e Unit
 advanceEnemies = do
   gs@(GameState g) <- get
   let -- Phase 1: for each enemy, determine if it wants to move, and where to
       actions = flip map g.enemies $ \e -> enemyAction g.bestiary e g.player
-      consequences = zipWith interpretActions g.enemies actions 
+      consequences = zipWith (interpretActions g.bestiary) g.enemies actions 
       -- Phase 2: find enemies whose moves are in conflict 
       -- these have their Move commands turned into Noops
       targetTiles = concat consequences >>= case _ of

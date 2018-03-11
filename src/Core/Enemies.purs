@@ -53,10 +53,8 @@ move Righty target@(XY xy)
   | otherwise = [Right, Right]
 
 
-enemyAction :: Partial => Bestiary -> Enemy -> Player -> Array Action
-enemyAction (Bestiary b) (Enemy e) (Player p) = move behavior (absoluteToLocal e p.location)
+enemyAction :: Bestiary -> Enemy -> Player -> Array Action
+enemyAction b (Enemy e) (Player p) = move behavior (absoluteToLocal e p.location)
   where
-    behavior = case (lookup e.species b) of
-                 Just (Tuple atk mv) -> mv
-                 Nothing -> crashWith $ "Species " <> show e.species <> " missing from bestiary."
+    behavior = moveBehavior b e.species
 
