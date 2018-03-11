@@ -35,9 +35,8 @@ play i = do
 -- origin is the upper left, x increases to the right, y increases down
 effectCoordinates :: Player -> Int -> Array XY -> Array XY
 effectCoordinates (Player p) range area = do
-  xc <- xcoords
-  yc <- ycoords
-  pure $ XY {x: xc, y: yc}
+  a <- area
+  pure $ append a effectCenter
     where 
         ploc :: { x :: Int, y :: Int }
         ploc  = un XY p.location
@@ -46,10 +45,6 @@ effectCoordinates (Player p) range area = do
                          West -> XY {x: ploc.x - range, y: ploc.y}
                          North -> XY {x: ploc.x, y: ploc.y - range}
                          South -> XY {x: ploc.x, y: ploc.y + range}
-        xoffsets = map x area
-        xcoords = zipWith (+) xoffsets (replicate (length xoffsets) (x effectCenter))
-        yoffsets = map y area
-        ycoords = zipWith (+) yoffsets (replicate (length yoffsets) (y effectCenter))
 
 kill :: forall e. Enemy -> Engine e Unit
 kill (Enemy e) = do
@@ -63,7 +58,7 @@ handle1CardEffect :: forall e. CardEffect -> Engine e Unit
 handle1CardEffect (Attack a) = do
   gs@(GameState g) <- get
   let targetSpaces = effectCoordinates g.player a.range a.area
-      targets = map (at gs) targetSpaces
+      targets = traceAny targetSpaces $ \_ -> map (at gs) targetSpaces
   sequence_ $ flip map targets $ onMatch
     { enemy: \e -> kill e }
     (const $ pure unit)

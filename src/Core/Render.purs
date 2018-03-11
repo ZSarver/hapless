@@ -37,13 +37,18 @@ placeFloor rotjs = sequence_ $ map render1floor floorspaces
       y <- range 1 6
       pure {x: x, y: y}
 
+placeDownStairs :: forall e. XY -> RotInstance -> Aff(rot :: ROT | e) Unit
+placeDownStairs (XY xy) rotjs = putTile T.downStairs xy.x xy.y rotjs
+
 render :: forall e. GameState -> RotInstance -> Aff (rot :: ROT, dom :: DOM | e) Unit
 render (GameState gs) rotjs = do
   clear rotjs
   placeWalls rotjs
   placeFloor rotjs
+  placeDownStairs (gs.stairs) rotjs
   renderPlayer gs.player rotjs
   renderCards gs.hand 
+  liftEff $ displayFloor gs.floor
   liftEff $ displayHp gs.hp
   liftEff $ displayDeck (length $ drawPile gs.deck)
   liftEff $ displayDiscard (length $ discardPile gs.deck)
