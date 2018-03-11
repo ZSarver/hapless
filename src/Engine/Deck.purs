@@ -39,3 +39,12 @@ draw n = do
     mightShuffle g
       | (canDraw g) > (length (drawPile g.deck)) = liftEff $ shuffleDeck g.deck
       | otherwise = pure g.deck
+
+discard :: forall e. Int -> Engine e Unit
+discard n = do
+  (GameState g) <- get
+  let h = g.hand
+  let discarded = if (length h) < n then [] else (take n h)
+  let hand' = if (length h) < n then h else (drop n h)
+  let deck' = Deck (drawPile g.deck) ((discardPile g.deck) <> discarded)
+  put $ GameState (g {hand = hand', deck = deck'})

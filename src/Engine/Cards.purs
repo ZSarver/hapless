@@ -11,14 +11,6 @@ import Control.Monad.State (execState, modify)
 import Data.Foldable (sequence_)
 import Debug.Trace (traceAny)
 
-
-
-discardN :: Int -> Hand -> Hand
-discardN n h = if (length h) < n then h else (drop n h)
-
-discard :: Hand -> Hand
-discard = discardN 1
-
 canPlay :: Card -> GameState -> Boolean
 canPlay (Card c) (GameState g) = c.cost < (length g.hand)
 
