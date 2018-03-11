@@ -76,5 +76,9 @@ handle1CardEffect (AttackMove xy)  = do
 
 handle1CardEffect (Rotate i) = modify $ liftPlayer (\(Player p) -> Player p{facing = rotate i p.facing})
 handle1CardEffect (Move xy) = do
-  (GameState g) <- get
-  modify $ flip movePlayerTo $ localToAbsolute (un Player g.player) xy
+  gs@(GameState g) <- get
+  let targetLocation = localToAbsolute (un Player g.player) xy
+  onMatch
+   { empty: const $ modify $ flip movePlayerTo targetLocation }
+   (const $ pure unit) (at gs targetLocation)
+  --modify $ flip movePlayerTo $ localToAbsolute (un Player g.player) xy
