@@ -19,11 +19,18 @@ advanceFloor ∷ ∀ e. Int → Engine e Unit
 advanceFloor n = do
   (GameState g) ← get
   let (Player p) = g.player
+  when (p.location == g.stairs) $ genFloor (g.floor + 1)
+
+genFloor :: forall e. Int -> Engine e Unit
+genFloor n = do
+  tellLn $ "Welcome to floor " <> show n <> ". "
+  (GameState g) ← get
+  let (Player p) = g.player
   -- we need to generate new stuff
   enemies' ← enemies_ g
   let enemies'' = filter (\(Enemy e) → p.location /= e.location) enemies'
   stairs' ← genStairs
-  put $ if p.location == g.stairs then GameState (g {enemies = enemies'', stairs = stairs', floor = n}) else GameState g
+  put $ GameState (g {enemies = enemies'', stairs = stairs', floor = n})
   where
     -- boundaries_ g = liftEff $ do
     --   xmax' ← randomInt (n + 4) (n + 8)

@@ -33,15 +33,17 @@ main = launchAff_ $ do
                             }
   rotjs <- initrotjs opts
   debug <- liftEff debugBox
-  flip execEngine dummyGameState $ forever $ do
-    gameState <- get
-    liftAff $ render gameState rotjs
-    liftAff $ log (serialize gameState)
-    key <- liftAff $ getKey rotjs
-    action <- liftAff $ handleKey key debug
-    case action of
-      Nothing -> pure unit
-      Just e -> e
+  flip execEngine dummyGameState $ do
+    genFloor 1
+    forever $ do
+      gameState <- get
+      liftAff $ render gameState rotjs
+      liftAff $ log (serialize gameState)
+      key <- liftAff $ getKey rotjs
+      action <- liftAff $ handleKey key debug
+      case action of
+        Nothing -> pure unit
+        Just e -> e
 
 execEngine :: forall e a. Engine e a -> GameState -> Aff (dom :: DOM, random :: RANDOM | e) a
 execEngine (Engine e) gs = evalStateT e gs
